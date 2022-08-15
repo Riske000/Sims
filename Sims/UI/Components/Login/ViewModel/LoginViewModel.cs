@@ -1,4 +1,6 @@
 ﻿using Sims.CompositeComon;
+using Sims.Model;
+using Sims.Persistance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace Sims.UI.Components.Login.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        private string username;
+        private string email;
         private string password;
         private RelayCommand loginCommand;
         private RelayCommand cancelCommand;
@@ -19,7 +21,7 @@ namespace Sims.UI.Components.Login.ViewModel
         private PasswordBox passwordBox;
         private MainWindowViewModel mainViewModel;
         private UserRepository userRepository = new UserRepository();
-        private Tabs selectedTab;
+
 
         public LoginViewModel(Window dialog, PasswordBox passwordBox, MainWindowViewModel mainViewModel)
         {
@@ -28,13 +30,13 @@ namespace Sims.UI.Components.Login.ViewModel
             this.mainViewModel = mainViewModel;
         }
 
-        public string Username
+        public string Email
         {
-            get { return username; }
+            get { return email; }
             set
             {
-                username = value;
-                OnPropertyChanged(nameof(username));
+                email = value;
+                OnPropertyChanged(nameof(email));
             }
         }
 
@@ -67,20 +69,19 @@ namespace Sims.UI.Components.Login.ViewModel
         }
 
         public PasswordBox PasswordBox { get => passwordBox; set => passwordBox = value; }
-        public Tabs SelectedTab { get => selectedTab; set => selectedTab = value; }
+
 
         #endregion
 
         private void LoginCommandExecute()
         {
-            User user = userRepository.getUserWithUsernameAndPassword(username, password);
+            User user = userRepository.getUserWithUsernameAndPassword(email, password);
 
             if (user != null)
             {
 
                 ApplicationContext.Instance.User = user;
                 dialog.Close();
-                SelectedTab = Tabs.Home;
             }
             else
             {
@@ -90,7 +91,7 @@ namespace Sims.UI.Components.Login.ViewModel
 
         private bool CanLoginCommandExecute()
         {
-            return !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password);
+            return !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password);
         }
 
         private void CancelCommandExecute()

@@ -17,7 +17,7 @@ namespace Sims.Model
         private Boolean accepted;
         private Boolean deleted;
 
-        public int Id { get { return id; } set { id = value; } }
+        public int ID { get { return id; } set { id = value; } }
         public string Code
         {
             get { return code; }

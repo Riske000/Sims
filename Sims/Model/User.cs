@@ -18,7 +18,7 @@ namespace Sims.Model
         private string phone;
         private UserType userType;
 
-        public int Id { get { return id; } set { id = value; } }
+        public int ID { get { return id; } set { id = value; } }
         public string Jmbg
         {
             get { return jmbg; }

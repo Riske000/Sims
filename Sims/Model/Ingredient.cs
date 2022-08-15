@@ -12,7 +12,7 @@ namespace Sims.Model
         private string name;
         private string description;
 
-        public int Id { get { return id; } set { id = value; } }
+        public int ID { get { return id; } set { id = value; } }
         public string Name
         {
             get { return name; }
