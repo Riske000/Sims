@@ -72,5 +72,11 @@ namespace Sims.Model
         {
             throw new NotImplementedException();
         }
+
+        public string FullName(User user)
+        {
+            string fullName = user.FirstName + " " + user.LastName;
+            return fullName;
+        }
     }
 }

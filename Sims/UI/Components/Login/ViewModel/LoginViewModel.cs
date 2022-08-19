@@ -86,7 +86,7 @@ namespace Sims.UI.Components.Login.ViewModel
 
                 ApplicationContext.Instance.User = user;
                 dialog.Close();
-                MedicinesView view = new MedicinesView();
+                UsersView view = new UsersView();
                 view.ShowDialog();
             }
             else

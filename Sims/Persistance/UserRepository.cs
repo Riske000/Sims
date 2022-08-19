@@ -1,4 +1,5 @@
-﻿using Sims.Model;
+﻿using Sims.CompositeComon.Enums;
+using Sims.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,21 @@ namespace Sims.Persistance
 
         //    return result;
         //}
+
+        public IEnumerable<Entity> Filter(UserType type)
+        {
+            List<Entity> result = new List<Entity>();
+
+            foreach (Entity entity in ApplicationContext.Instance.Users)
+            {
+                if (((User)entity).UserType.ToString().Equals(type.ToString()))
+                {
+                    result.Add(entity);
+                }
+            }
+
+            return result;
+        }
 
         public User getUserWithEmailAndPassword(string email, string password)
         {

@@ -38,12 +38,12 @@
                     <DataGrid x:Name="DataGrid" Grid.Column="0" SelectionMode="Single" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
             SelectedItem="{Binding SelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="*" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Code" Binding="{Binding Code, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Code" CanUserSort="False" Binding="{Binding Code, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Producer" Binding="{Binding Producer, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Is accepted" Binding="{Binding Accepted, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Is deleted" Binding="{Binding Deleted, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Producer" CanUserSort="False" Binding="{Binding Producer, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Is accepted" CanUserSort="False" Binding="{Binding Accepted, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Is deleted" CanUserSort="False" Binding="{Binding Deleted, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Price" Binding="{Binding Price, Mode=OneWay}"/>
                         </DataGrid.Columns>
                     </DataGrid>
