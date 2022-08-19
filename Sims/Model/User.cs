@@ -9,7 +9,6 @@ namespace Sims.Model
 {
     public class User : Entity
     {
-        private int id;
         private string jmbg;
         private string email;
         private string password;
@@ -18,7 +17,6 @@ namespace Sims.Model
         private string phone;
         private UserType userType;
 
-        public int ID { get { return id; } set { id = value; } }
         public string Jmbg
         {
             get { return jmbg; }

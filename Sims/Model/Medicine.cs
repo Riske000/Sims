@@ -8,16 +8,20 @@ namespace Sims.Model
 {
     public class Medicine : Entity
     {
-        private int id;
         private string code;
         private string name;
         private string producer;
         private int quantity;
-        private Dictionary<long, Ingredient> ingredients;
+        private Dictionary<double, Ingredient> ingredients;
         private Boolean accepted;
         private Boolean deleted;
+        private double price;
 
-        public int ID { get { return id; } set { id = value; } }
+        public Medicine()
+        {
+            this.ingredients = new Dictionary<double, Ingredient>();
+        }
+
         public string Code
         {
             get { return code; }
@@ -42,7 +46,7 @@ namespace Sims.Model
             set { quantity = value; OnPropertyChanged("Quantity"); }
         }
 
-        public Dictionary<long, Ingredient> Ingredients
+        public Dictionary<double, Ingredient> Ingredients
         {
             get { return ingredients; }
             set { ingredients = value; OnPropertyChanged("Ingredients"); }
@@ -59,6 +63,12 @@ namespace Sims.Model
             get { return deleted; }
             set { deleted = value; OnPropertyChanged("Deleted"); }
         }
+
+        public double Price
+        {
+            get { return price; }
+            set { price = value; OnPropertyChanged("Price"); }
+        }
         public override void InitExportList()
         {
             throw new NotImplementedException();
@@ -66,12 +76,12 @@ namespace Sims.Model
 
         public override string Validate(string columnName)
         {
-            throw new NotImplementedException();
+            return string.Empty;
         }
 
         protected override void ValidateSelf()
         {
-            throw new NotImplementedException();
+
         }
     }
 }

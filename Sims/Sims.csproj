@@ -9,7 +9,10 @@
 
   <ItemGroup>
     <Folder Include="Icons\" />
-    <Folder Include="UI\Dialogs\View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

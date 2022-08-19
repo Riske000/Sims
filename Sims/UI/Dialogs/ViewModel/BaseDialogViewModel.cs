@@ -29,7 +29,7 @@ namespace Sims.UI.Dialogs.ViewModel
         private DialogState dialogState;
         protected Entity selectedItem;
         protected Entity oldItem;
-        protected UserControl dialog;
+        protected Window dialog;
 
         private ObservableCollection<Entity> items;
 
@@ -37,7 +37,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         #region Constructors
 
-        public BaseDialogViewModel(UserControl dialog, Type type)
+        public BaseDialogViewModel(Window dialog, Type type)
         {
             this.dialog = dialog;
             this.type = type;

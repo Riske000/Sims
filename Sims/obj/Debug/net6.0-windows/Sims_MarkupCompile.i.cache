@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 C:\Users\neman\Desktop\Sims\Sims\Sims\App.xaml
-3569598166
+4711226314
 
-30-1511638268
-194-1951243044
-MainWindow.xaml;UI\Components\Login\View\LoginView.xaml;UI\Components\Toolbar\View\ToolbarView.xaml;
+3520788342
+19983234635
+MainWindow.xaml;UI\Components\Login\View\LoginView.xaml;UI\Components\Toolbar\View\ToolbarView.xaml;UI\Dialogs\View\MedicinesView.xaml;
 
-False
+True
 

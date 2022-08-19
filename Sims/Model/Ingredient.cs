@@ -8,11 +8,9 @@ namespace Sims.Model
 {
     public class Ingredient : Entity
     {
-        private int id;
         private string name;
         private string description;
 
-        public int ID { get { return id; } set { id = value; } }
         public string Name
         {
             get { return name; }

@@ -53,7 +53,7 @@ namespace Sims.UI.Components.Toolbar.View {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Sims;V1.0.0.0;component/ui/components/toolbar/view/toolbarview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Sims;component/ui/components/toolbar/view/toolbarview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\..\..\UI\Components\Toolbar\View\ToolbarView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

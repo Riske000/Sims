@@ -1,6 +1,4 @@
-﻿using Sims.Model;
-using Sims.UI.Components.Login.View;
-using Sims.UI.Dialogs.View;
+﻿using Sims.UI.Dialogs.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,26 +11,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Sims
+namespace Sims.UI.Dialogs.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MedicinesView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MedicinesView : Window
     {
-        public MainWindow()
+        public MedicinesView()
         {
-            if (ApplicationContext.Instance.User == null)
-            {
-                LoginView view = new LoginView();
-                view.ShowDialog();
-            }
-            
-
             InitializeComponent();
+
+            DataContext = new MedicinesViewModel(this);
         }
     }
 }

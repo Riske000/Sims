@@ -29,9 +29,9 @@ namespace Sims.Model
                 if (instance == null)
                 {
                     instance = new ApplicationContext();
-                    //instnace.LoadUsers();
-                    //instnace.LoadIngredients();
-                    //instnace.LoadMedicines();
+                    instance.LoadUsers();
+                    instance.LoadIngredients();
+                    instance.LoadMedicines();
                 }
                 return instance;
             }
@@ -97,7 +97,7 @@ namespace Sims.Model
                 string[] data = line.Split('|');
 
                 User user = new User();
-                user.ID = int.Parse(data[0]);
+                user.ID = data[0];
                 user.Jmbg = data[1];
                 user.Email = data[2];
                 user.Password = data[3];
@@ -129,7 +129,7 @@ namespace Sims.Model
                 string[] data = line.Split('|');
 
                 Ingredient ingredient= new Ingredient();
-                ingredient.ID = int.Parse(data[0]);
+                ingredient.ID = data[0];
                 ingredient.Name= data[1];
                 ingredient.Description = data[2];
                 result.Add(ingredient);
@@ -156,18 +156,37 @@ namespace Sims.Model
                 string[] data = line.Split('|');
 
                 Medicine medicine = new Medicine();
-                medicine.ID = int.Parse(data[0]);
+                medicine.ID = data[0];
                 medicine.Code = data[1];
                 medicine.Name = data[2];
                 medicine.Producer = data[3];
                 medicine.Quantity = int.Parse(data[4]); 
-                //recnik dodati
+                string [] data2 = data[5].Split(';');
+                foreach(string s in data2)
+                {
+                    string[] data3 = s.Split(',');
+                    double d = double.Parse(data3[0], System.Globalization.CultureInfo.InvariantCulture);
+                    medicine.Ingredients.Add(d, findByID(int.Parse(data3[1])));
+                }
                 medicine.Accepted = Boolean.Parse(data[6]);
-                medicine.Deleted = Boolean.Parse(data[6]);
+                medicine.Deleted = Boolean.Parse(data[7]);
+                medicine.Price = double.Parse(data[8]);
                 result.Add(medicine);
             }
 
-            users = result;
+            medicines = result;
+        }
+
+        public Ingredient findByID(int id)
+        {
+            foreach(Ingredient i in ingredients)
+            {
+                if(int.Parse(i.ID) == id)
+                {
+                    return i;
+                }
+            }
+            return null;
         }
 
         public void SaveUsers()
@@ -237,9 +256,15 @@ namespace Sims.Model
                     line += ((Medicine)entity).Name + "|";
                     line += ((Medicine)entity).Producer + "|";
                     line += ((Medicine)entity).Quantity + "|";
-                    // za recnik
+                    foreach(KeyValuePair<double, Ingredient> kvp in ((Medicine)entity).Ingredients)
+                    {
+                        line += kvp.Key + ",";
+                        line += kvp.Value.ID + ";";
+                    }
+                    line = line.Remove(line.Length - 1, 1) + "|";
                     line += ((Medicine)entity).Accepted + "|";
                     line += ((Medicine)entity).Deleted;
+                    line +=((Medicine)entity).Price;
 
                     file.WriteLine(line);
                 }

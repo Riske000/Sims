@@ -20,13 +20,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Times New Roman" FontSize="30" FontStyle="Normal" Width="120"/>
-        <Label Grid.Column="0"  FontSize="16" Margin="0,44,0,1" Grid.RowSpan="2"/>
-        <TextBox Text="{Binding Path=Username, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5" Width="131" Height="23"/>
-        <Label Grid.Column="0" Grid.Row="1"  FontSize="16" Margin="0,29,0,45" Grid.RowSpan="3"/>
-        <PasswordBox PasswordChanged="passwordBox_PasswordChanged" x:Name="passwordBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,5,0,0" Width="131" Height="23"/>
-        <Button Padding="-10" Grid.Column="0" Grid.Row="3"  FontWeight="Normal" Command="{Binding LoginCommand}" HorizontalAlignment="Stretch" Margin="10,10,10,12" FontSize="14" FontStyle="Normal" Height="20" Width="85" VerticalAlignment="Stretch"/>
-        <Button Padding="-10" Grid.Column="1" Grid.Row="3"  FontWeight="Normal" Command="{Binding CancelCommand}" HorizontalAlignment="Stretch" Margin="23,10,23,12" FontStyle="Normal" FontSize="14" Height="20" Width="85" />
+        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Sign in"  HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Times New Roman" FontSize="30" FontStyle="Normal" Width="120"/>
+        <Label Grid.Column="0" Content="Email" FontSize="16" Margin="0,44,0,1" Grid.RowSpan="2"/>
+        <TextBox Text="{Binding Path=Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5" Width="131" Height="23"/>
+        <Label Grid.Column="0" Grid.Row="1" Content="Password" FontSize="16" Margin="0,29,0,45" Grid.RowSpan="3"/>
+        <PasswordBox PasswordChanged="passwordBox_PasswordChanged"  x:Name="passwordBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,5,0,0" Width="131" Height="23"/>
+        <Button Padding="-10" Grid.Column="0" Grid.Row="3"  Content="Login" FontWeight="Normal" Command="{Binding LoginCommand}" HorizontalAlignment="Stretch" Margin="10,10,10,12" FontSize="14" FontStyle="Normal" Height="20" Width="85" VerticalAlignment="Stretch"/>
+        <Button Padding="-10" Grid.Column="1" Grid.Row="3"  Content="Exit" FontWeight="Normal" Command="{Binding CancelCommand}" HorizontalAlignment="Stretch" Margin="23,10,23,12" FontStyle="Normal" FontSize="14" Height="20" Width="85" />
     </Grid>
 
 </Window>

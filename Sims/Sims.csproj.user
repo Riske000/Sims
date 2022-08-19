@@ -13,6 +13,9 @@
     <Compile Update="UI\Components\Toolbar\View\ToolbarView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UI\Dialogs\View\MedicinesView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">
@@ -22,6 +25,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\Components\Toolbar\View\ToolbarView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\Dialogs\View\MedicinesView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

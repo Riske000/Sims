@@ -24,7 +24,7 @@ namespace Sims.Persistance
         //    return result;
         //}
 
-        public User getUserWithUsernameAndPassword(string email, string password)
+        public User getUserWithEmailAndPassword(string email, string password)
         {
             foreach (Entity entity in ApplicationContext.Instance.Users)
             {
