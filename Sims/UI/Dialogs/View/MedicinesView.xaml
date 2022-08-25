@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Sims.UI.Dialogs.View" xmlns:converters="clr-namespace:Sims.CompositeComon.Converters" 
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
-        Title="MedicinesView" Height="450" Width="800">
+        Title="MedicinesView" Height="800" Width="1400"  WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <converters:DialogStateToEnabledConverter x:Key="DialogStateToEnabledConverter"/>
     </Window.Resources>
@@ -18,43 +18,67 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" >
 
-                    <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
-                    <Button Width="30" Height="30" VerticalAlignment="Center">
+                    <Button Width="30" Height="30" Command="{Binding ExitCommand}"/>
+                    <Label Content="Sort:"/>
+                    <ComboBox Text="Sort" Width="80" Name="Sort" SelectedValuePath="Content" SelectedValue="{Binding Path=SortType}">
+                        <ComboBoxItem Content="Ascending"/>
+                        <ComboBoxItem Content="Descending"/>
+                    </ComboBox>
+                    <Label Content="Select a category:"/>
+                    <ComboBox Text="Category" Width="80" Name="Category" SelectedValuePath="Content" SelectedValue="{Binding Path=Category}">
+                        <ComboBoxItem Content="Code"/>
+                        <ComboBoxItem Content="Name"/>
+                        <ComboBoxItem Content="Producer"/>
+                        <ComboBoxItem Content="Price"/>
+                        <ComboBoxItem Content="Quantity"/>
+                        <ComboBoxItem Content="Ingredients"/>
+                    </ComboBox>
+
+                    <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceNotSelected}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
+                    <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceSelected}" Text="{Binding Price1, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
+                    <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceSelected}" Text="{Binding Price2, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
+                    <Button Width="30" Height="30" VerticalAlignment="Center" Command="{Binding SearchCommand}">
 
                     </Button>
                 </StackPanel>
 
                 <Grid Grid.Column="0" Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="500"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <DataGrid x:Name="DataGrid" Grid.Column="0" SelectionMode="Single" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
-            SelectedItem="{Binding SelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="*" >
+            SelectedItem="{Binding SelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="Auto" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Code" CanUserSort="False" Binding="{Binding Code, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Name" CanUserSort="False" Binding="{Binding Name, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Quantity" CanUserSort="False" Binding="{Binding Quantity, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Producer" CanUserSort="False" Binding="{Binding Producer, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Is accepted" CanUserSort="False" Binding="{Binding Accepted, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Is deleted" CanUserSort="False" Binding="{Binding Deleted, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Price" Binding="{Binding Price, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Price" CanUserSort="False" Binding="{Binding Price, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Is declined" CanUserSort="False" Binding="{Binding Declined, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Reason by farmacist" CanUserSort="False" Binding="{Binding ReasonByFarmacist, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Reason by doctor" CanUserSort="False" Binding="{Binding ReasonByDoctor, Mode=OneWay}"/>
                         </DataGrid.Columns>
                     </DataGrid>
-
-                    <DataGrid x:Name="DataGrid2" Grid.Column="1" SelectionMode="Single" ItemsSource="{Binding IngredientTableModels, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
-            SelectedItem="{Binding SelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="*">
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                    <Setter Property="IsHitTestVisible" Value="False"/>
-                            </Style>
-                        </DataGrid.RowStyle>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Amount of ingredient: "/>
+                        <TextBox Width="50" Text="{Binding Amount}"/>
+                        <Label Content="Select ingredient:" />
+                        <ComboBox Text="Ingredient" Height="30" VerticalAlignment="Top" SelectedValue="{Binding IngredientToAdd}" Width="80" DisplayMemberPath="Name" ItemsSource="{Binding Ingredients}">
+                        </ComboBox>
+                        <Button Width="Auto" Height="30" Content="Add ingredient" VerticalAlignment="Top" Command="{Binding AddIngredientToMedicineCommand}"/>
+                    </StackPanel>
+                    <DataGrid x:Name="DataGrid2" Grid.Column="1" SelectionMode="Single" Margin="0,30,0,0" ItemsSource="{Binding IngredientTableModels, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
+            SelectedItem="{Binding IngredientSelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="Auto">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Amount of ingredient in grams" Binding="{Binding Quantity}"/>
                             <DataGridTextColumn Header="Name of ingredient" Binding="{Binding IngredientName}"/>
@@ -69,7 +93,9 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Column="0" Grid.Row="1" DockPanel.Dock="Bottom"  IsEnabled="{Binding DialogState, Converter={StaticResource DialogStateToEnabledConverter}}" Margin="0,232,0,-163">
@@ -80,6 +106,10 @@
 
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -95,16 +125,19 @@
                     <TextBox Text="{Binding Path=SelectedItem.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5"/>
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Price]}" Foreground="Red" Grid.Row="1" Grid.Column="2" Margin="15,0,0,0"/>-->
-
-                    <Label Grid.Column="0" Grid.Row="2" Content="Quantity"/>
-                    <TextBox Text="{Binding Path=SelectedItem.Quantity, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                    <Label Grid.Column="0" Grid.Row="2" Content="Producer: "/>
+                    <TextBox Text="{Binding Path=SelectedItem.Producer, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
                                          Grid.Row="2" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
+
+                    <Label Grid.Column="0" Grid.Row="3" Content="Quantity: "/>
+                    <TextBox Text="{Binding Path=SelectedItem.Quantity, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                                         Grid.Row="3" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Ingredients]}" Foreground="Red" Grid.Row="2" Grid.Column="2" Margin="15,0,0,0"/>-->
 
-                    <Label Grid.Column="0" Grid.Row="3" Content="Producer: "/>
-                    <TextBox Text="{Binding Path=SelectedItem.Producer, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                                         Grid.Row="3" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Alergens]}" Foreground="Red" Grid.Row="3" Grid.Column="2" Margin="15,0,0,0"/>-->
+                    <Label Grid.Column="0" Grid.Row="4" Content="Price: "/>
+                    <TextBox Text="{Binding Path=SelectedItem.Price, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                                         Grid.Row="4" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
                 </Grid>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Margin="0,232,10,10" HorizontalAlignment="Right" Grid.RowSpan="2" >
@@ -114,6 +147,28 @@
                     <Button Grid.Column="0" Grid.Row="4" IsDefault="True" Content="Ok" Command="{Binding OkCommand}" Margin="5" />
                     <Button Grid.Column="0" Grid.Row="5" IsCancel="True" Content="Cancel" Command="{Binding CancelCommand}" Margin="5" />
                 </StackPanel>
+
+                <Grid Grid.Row="3" Margin="0,100,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Amount of medicine to add: " />
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding AmountToAdd, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Date of adding(optional): "/>
+                    <DatePicker Grid.Row="1" Name="DatePicker1" Grid.Column="1" SelectedDate="{Binding DayOfAdding}"/>
+
+                    <Button Content="Add amount" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding AddAmountOfMedicineCommand}"/>
+                </Grid>
+                
             </Grid>
         </Grid>
     </DockPanel>

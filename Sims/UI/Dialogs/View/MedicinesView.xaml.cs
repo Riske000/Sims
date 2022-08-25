@@ -24,7 +24,7 @@ namespace Sims.UI.Dialogs.View
         {
             InitializeComponent();
 
-            DataContext = new MedicinesViewModel(this);
+            DataContext = new MedicinesController(this);
         }
     }
 }

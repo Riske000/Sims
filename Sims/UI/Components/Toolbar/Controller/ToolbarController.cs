@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sims.UI.Components.Toolbar.ViewModel
 {
-    public class ToolbarViewModel : ViewModelBase
+    public class ToolbarController : ViewModelBase
     {
         private RelayCommand homeCommand;
         

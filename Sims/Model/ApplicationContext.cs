@@ -1,10 +1,14 @@
 ﻿using Sims.CompositeComon.Enums;
+using Sims.CompositeComon.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sims.Service;
+using Sims.UI.Dialogs.ViewModel;
+using System.Threading;
 
 namespace Sims.Model
 {
@@ -14,8 +18,12 @@ namespace Sims.Model
         private List<Entity> users = new List<Entity>();
         private List<Entity> ingredients = new List<Entity>();
         private List<Entity> medicines = new List<Entity>();
+        private List<ScheudledAddition> scheudledAddiotons = new List<ScheudledAddition>();
         private MainWindowViewModel mainWindowViewModel;
         private User user;
+        private MedicineService service = new MedicineService();
+
+
 
         public ApplicationContext()
         {
@@ -32,9 +40,15 @@ namespace Sims.Model
                     instance.LoadUsers();
                     instance.LoadIngredients();
                     instance.LoadMedicines();
+                    instance.LoadScheudledAdditions();
+                    foreach (ScheudledAddition scheudledAddition in ApplicationContext.Instance.ScheudledAddiotons)
+                    {
+                        Instance.AddAmount(scheudledAddition);
+                    }
                 }
                 return instance;
             }
+            
         }
 
         public List<Entity> Users
@@ -53,6 +67,12 @@ namespace Sims.Model
         {
             get { return medicines; }
             set { medicines = value; }
+        }
+
+        public List<ScheudledAddition> ScheudledAddiotons
+        {
+            get { return scheudledAddiotons; }
+            set { scheudledAddiotons = value; }
         }
 
         public MainWindowViewModel MainWindowViewModel
@@ -105,6 +125,7 @@ namespace Sims.Model
                 user.LastName = data[5];
                 user.Phone = data[6];
                 user.UserType = GetUserType(data[7]);
+                user.Blocked = Boolean.Parse(data[8]);
                 result.Add(user);
             }
 
@@ -128,9 +149,9 @@ namespace Sims.Model
             {
                 string[] data = line.Split('|');
 
-                Ingredient ingredient= new Ingredient();
+                Ingredient ingredient = new Ingredient();
                 ingredient.ID = data[0];
-                ingredient.Name= data[1];
+                ingredient.Name = data[1];
                 ingredient.Description = data[2];
                 result.Add(ingredient);
             }
@@ -154,34 +175,92 @@ namespace Sims.Model
             while ((line = reader.ReadLine()) != null)
             {
                 string[] data = line.Split('|');
+                
 
                 Medicine medicine = new Medicine();
                 medicine.ID = data[0];
                 medicine.Code = data[1];
                 medicine.Name = data[2];
                 medicine.Producer = data[3];
-                medicine.Quantity = int.Parse(data[4]); 
-                string [] data2 = data[5].Split(';');
-                foreach(string s in data2)
+                medicine.Quantity = int.Parse(data[4]);
+                string[] data2 = data[5].Split(';');
+                foreach (string s in data2)
                 {
-                    string[] data3 = s.Split(',');
-                    double d = double.Parse(data3[0], System.Globalization.CultureInfo.InvariantCulture);
+                    string[] data3 = s.Split('_');
+                    double d = double.Parse(data3[0]);
                     medicine.Ingredients.Add(d, findByID(int.Parse(data3[1])));
                 }
                 medicine.Accepted = Boolean.Parse(data[6]);
-                medicine.Deleted = Boolean.Parse(data[7]);
-                medicine.Price = double.Parse(data[8]);
+                medicine.Declined = Boolean.Parse(data[7]);
+                medicine.Deleted = Boolean.Parse(data[8]);
+                medicine.Price = double.Parse(data[9]);
+                medicine.ReasonByFarmacist = data[10];
+                medicine.ReasonByDoctor = data[11];
+                medicine.CounterForFarmacist = int.Parse(data[12]);
+                medicine.CounterForDoctor = int.Parse(data[13]);
                 result.Add(medicine);
             }
 
             medicines = result;
         }
 
+        public void LoadScheudledAdditions()
+        {
+            List<ScheudledAddition> result = new List<ScheudledAddition>();
+
+            if (!File.Exists("scheudledAdditions.txt"))
+            {
+                scheudledAddiotons = result;
+                return;
+            }
+
+            StreamReader reader = new StreamReader("scheudledAdditions.txt");
+            string line;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] data = line.Split('|');
+
+                ScheudledAddition scheudledAddition = new ScheudledAddition();
+
+                scheudledAddition.IdOfMedicine = data[0];
+                scheudledAddition.AmountToAdd = int.Parse(data[1]);
+                scheudledAddition.DateOfAddition = DateTime.Parse(data[2]);
+                result.Add(scheudledAddition);
+            }
+
+            scheudledAddiotons = result;
+        }
+
+        public void SaveScheudledAdditions()
+        {
+            if (scheudledAddiotons == null)
+            {
+                return;
+            }
+
+            using (StreamWriter file = new StreamWriter("scheudledAdditions.txt"))
+            {
+                foreach (ScheudledAddition scheudledAddition in scheudledAddiotons)
+                {
+                    string line = string.Empty;
+
+                    line += scheudledAddition.IdOfMedicine + "|";
+                    line += scheudledAddition.AmountToAdd + "|";
+                    line += scheudledAddition.DateOfAddition;
+
+                    file.WriteLine(line);
+                }
+            }
+        }
+
+
+
         public Ingredient findByID(int id)
         {
-            foreach(Ingredient i in ingredients)
+            foreach (Ingredient i in ingredients)
             {
-                if(int.Parse(i.ID) == id)
+                if (int.Parse(i.ID) == id)
                 {
                     return i;
                 }
@@ -209,7 +288,8 @@ namespace Sims.Model
                     line += ((User)entity).FirstName + "|";
                     line += ((User)entity).LastName + "|";
                     line += ((User)entity).Phone + "|";
-                    line += ((User)entity).UserType.ToString();
+                    line += ((User)entity).UserType.ToString() + "|";
+                    line += ((User)entity).Blocked;
 
                     file.WriteLine(line);
                 }
@@ -256,16 +336,20 @@ namespace Sims.Model
                     line += ((Medicine)entity).Name + "|";
                     line += ((Medicine)entity).Producer + "|";
                     line += ((Medicine)entity).Quantity + "|";
-                    foreach(KeyValuePair<double, Ingredient> kvp in ((Medicine)entity).Ingredients)
+                    foreach (KeyValuePair<double, Ingredient> kvp in ((Medicine)entity).Ingredients)
                     {
-                        line += kvp.Key + ",";
+                        line += kvp.Key + "_";
                         line += kvp.Value.ID + ";";
                     }
                     line = line.Remove(line.Length - 1, 1) + "|";
                     line += ((Medicine)entity).Accepted + "|";
-                    line += ((Medicine)entity).Deleted;
-                    line +=((Medicine)entity).Price;
-
+                    line += ((Medicine)entity).Declined + "|";
+                    line += ((Medicine)entity).Deleted + "|";
+                    line += ((Medicine)entity).Price + "|";
+                    line += ((Medicine)entity).ReasonByFarmacist + "|";
+                    line += ((Medicine)entity).ReasonByDoctor + "|";
+                    line += ((Medicine)entity).CounterForFarmacist + "|";
+                    line += ((Medicine)entity).CounterForDoctor;
                     file.WriteLine(line);
                 }
             }
@@ -281,19 +365,54 @@ namespace Sims.Model
             {
                 return Ingredients;
             }
-            else 
+            else
             {
                 return Medicines;
             }
         }
 
-        
-        
+        public string GenerateIDForUser()
+        {
+            int id = (int.Parse(ApplicationContext.Instance.Users.Last().ID) + 1);
+            return id.ToString();
+        }
+
+        public string GenerateIDForMedicine()
+        {
+            int id = (int.Parse(ApplicationContext.Instance.Medicines.Last().ID) + 1);
+            return id.ToString();
+        }
+
         public void Save()
         {
-            //SaveUsers();
-            //SaveIngredients();
-            //SaveMedicines();
+            SaveUsers();
+            SaveIngredients();
+            SaveMedicines();
+        }
+
+        public void AddAmount(ScheudledAddition scheudledAddition)
+        {
+            if (scheudledAddition.DateOfAddition == DateTime.Today)
+            {
+                Medicine medicine = service.getMedicineById(scheudledAddition.IdOfMedicine);
+                medicine.Quantity += scheudledAddition.AmountToAdd;
+
+
+            }
+
+        }
+
+        public void RemoveScheudledAddition()
+        {
+            foreach (ScheudledAddition scheudledAddition in scheudledAddiotons.ToList())
+            {
+                if (scheudledAddition.DateOfAddition == DateTime.Today)
+                {
+                    Instance.ScheudledAddiotons.Remove(scheudledAddition);
+
+                    Instance.SaveScheudledAdditions();
+                }
+            }
         }
     }
 }

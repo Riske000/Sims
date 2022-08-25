@@ -12,7 +12,7 @@ using System.Windows.Controls;
 
 namespace Sims.UI.Components.Login.ViewModel
 {
-    public class LoginViewModel : ViewModelBase
+    public class LoginController : ViewModelBase
     {
         private string email;
         private string password;
@@ -25,12 +25,13 @@ namespace Sims.UI.Components.Login.ViewModel
         private int counter;
 
 
-        public LoginViewModel(Window dialog, PasswordBox passwordBox, MainWindowViewModel mainViewModel)
+        public LoginController(Window dialog, PasswordBox passwordBox, MainWindowViewModel mainViewModel)
         {
             this.dialog = dialog;
             this.PasswordBox = passwordBox;
             this.mainViewModel = mainViewModel;
             this.counter = 0;
+
         }
 
         public string Email
@@ -81,20 +82,27 @@ namespace Sims.UI.Components.Login.ViewModel
         {
             User user = userRepository.getUserWithEmailAndPassword(email, password);
 
-            if (user != null)
+            if (user == null)
+            {
+                counter++;
+                MessageBox.Show("Wrong username or password!");
+            }
+            else if (user.Blocked == true)
+            {
+                counter++;
+                MessageBox.Show("You are blocked!");
+            }
+            else if (user != null)
             {
 
                 ApplicationContext.Instance.User = user;
                 dialog.Close();
-                UsersView view = new UsersView();
+                MedicinesView view = new MedicinesView();
                 view.ShowDialog();
+                UsersView view2 = new UsersView();
+                view2.ShowDialog();
             }
-            else
-            {
-                counter++;
-                MessageBox.Show("Wrong username or password");
-            }
-            if(counter == 3)
+            if (counter == 3)
             {
                 System.Windows.Application.Current.Shutdown();
             }

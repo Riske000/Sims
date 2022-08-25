@@ -1,6 +1,7 @@
 ﻿using Sims.CompositeComon;
 using Sims.CompositeComon.Enums;
 using Sims.Model;
+using Sims.Service;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +13,7 @@ using System.Windows.Controls;
 
 namespace Sims.UI.Dialogs.ViewModel
 {
-    public abstract class BaseDialogViewModel : ViewModelBase
+    public abstract class BaseDialogController : ViewModelBase
     {
         #region Fields
 
@@ -31,13 +32,15 @@ namespace Sims.UI.Dialogs.ViewModel
         protected Entity oldItem;
         protected Window dialog;
 
+        private UserService userService = new UserService();
+
         private ObservableCollection<Entity> items;
 
         #endregion Fields
 
         #region Constructors
 
-        public BaseDialogViewModel(Window dialog, Type type)
+        public BaseDialogController(Window dialog, Type type)
         {
             this.dialog = dialog;
             this.type = type;
@@ -151,6 +154,19 @@ namespace Sims.UI.Dialogs.ViewModel
                 {
                     selectedItem = value;
                     OnPropertyChanged(nameof(SelectedItem));
+                }
+            }
+        }
+
+        public virtual Entity OldItem
+        {
+            get { return oldItem; }
+            set
+            {
+                if (oldItem != value)
+                {
+                    oldItem = value;
+                    OnPropertyChanged(nameof(OldItem));
                 }
             }
         }
@@ -273,12 +289,11 @@ namespace Sims.UI.Dialogs.ViewModel
         {
             if (DialogState == DialogState.Edit)
             {
-                SelectedItem.ImportObject(oldItem);
+                SelectedItem.ImportObject(OldItem);
             }
 
             DialogState = DialogState.View;
             SelectedItem.Validation = false;
-            SelectedItem = null;
             Init();
         }
 
@@ -290,13 +305,14 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected void ExitCommandExecute()
         {
-            DialogState = DialogState.View;
+            ApplicationContext.Instance.Save();
+            System.Windows.Application.Current.Shutdown();
         }
 
         protected bool CanExitCommandExecute()
         {
 
-            return dialogState == DialogState.View;
+            return true;
         }
 
         #endregion
@@ -318,8 +334,29 @@ namespace Sims.UI.Dialogs.ViewModel
                 return false;
             }
 
-            Items.Add(SelectedItem);
+            if (SelectedItem is User)
+            {
+                if (!userService.CheckEmail(((User)SelectedItem).Email))
+                {
+                    MessageBox.Show("User with this Email already exists!");
+                    return false;
+                }
+                if (!userService.CheckJmbg(((User)SelectedItem).Jmbg))
+                {
+                    MessageBox.Show("User with this JMBG already exists!");
+                    return false;
+                }
+                SelectedItem.ID = ApplicationContext.Instance.GenerateIDForUser();
+                ApplicationContext.Instance.Users.Add(SelectedItem);
+            }
+            else if (SelectedItem is Medicine)
+            {
+                SelectedItem.ID = ApplicationContext.Instance.GenerateIDForMedicine();
+                ApplicationContext.Instance.Medicines.Add(SelectedItem);
+            }
 
+            Items.Add(SelectedItem);
+            ApplicationContext.Instance.Save();
             return true;
         }
 
@@ -335,7 +372,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual Entity OkAfterAddDatabase()
         {
-            return null;
+            return SelectedItem;
         }
 
         protected virtual Entity OkAfterEditDatabase()

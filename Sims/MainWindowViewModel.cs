@@ -10,8 +10,8 @@ namespace Sims
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private ToolbarViewModel toolbarViewModel;
-        public ToolbarViewModel ToolbarViewModel
+        private ToolbarController toolbarViewModel;
+        public ToolbarController ToolbarViewModel
         {
             get { return toolbarViewModel; }
             set { toolbarViewModel = value; }

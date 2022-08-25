@@ -1,4 +1,5 @@
-﻿using Sims.UI.Components.Login.ViewModel;
+﻿using Sims.Model;
+using Sims.UI.Components.Login.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,15 @@ namespace Sims.UI.Components.Login.View
         {
             InitializeComponent();
 
-            DataContext = new LoginViewModel(this, passwordBox, null);
+            DataContext = new LoginController(this, passwordBox, null);
+
+            ApplicationContext.Instance.SaveMedicines();
+            ApplicationContext.Instance.RemoveScheudledAddition();
         }
 
         private void passwordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            ((LoginViewModel)DataContext).Password = passwordBox.Password;
+            ((LoginController)DataContext).Password = passwordBox.Password;
         }
     }
 }

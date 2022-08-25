@@ -1,4 +1,5 @@
 ﻿using Sims.Model;
+using Sims.UI.Dialogs.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Sims.Persistance
             return result;
         }
 
-        public IEnumerable<Entity> Search(string category, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
+        public IEnumerable<Entity> Search(string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
         {
             List<Entity> result = new List<Entity>();
 
@@ -67,9 +68,9 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Quantity":
-                    foreach(Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
                     {
-                        if(((Medicine)entity).Quantity >= quantity)
+                        if (((Medicine)entity).Quantity >= quantity)
                         {
                             result.Add(entity);
                         }
@@ -80,34 +81,163 @@ namespace Sims.Persistance
                     break;
             }
 
-            return result;
+
+            if (category == "Name")
+            {
+                if (sortType == "Ascending")
+                {
+                    return result.OrderBy(x => ((Medicine)x).Name);
+                }
+                else
+                {
+                    return result.OrderByDescending(x => ((Medicine)x).Name);
+                }
+
+            }
+            else if (category == "Price")
+            {
+                if (sortType == "Ascending")
+                {
+                    return result.OrderBy(x => ((Medicine)x).Price);
+                }
+                else
+                {
+                    return result.OrderByDescending(x => ((Medicine)x).Price);
+                }
+            }
+            else
+            {
+                if (sortType == "Ascending")
+                {
+                    return result.OrderBy(x => ((Medicine)x).Quantity);
+                }
+                else
+                {
+                    return result.OrderByDescending(x => ((Medicine)x).Quantity);
+                }
+
+            }
+
         }
 
         public List<Entity> searchIngredients(string term = "")
         {
             List<Entity> result = new List<Entity>();
+            List<Entity> temp = new List<Entity>();
             string[] data = term.Split(' ');
             List<string> strings = new List<string>();
             List<string> operators = new List<string>();
             string begin = "";
             string end = data.Last();
+
             foreach (string s in data)
             {
-                if(s == "&" || s == "|")
+                if (s == "&" || s == "|")
                 {
                     strings.Add(begin.Trim());
                     begin = string.Empty;
                     operators.Add(s.Trim());
                     continue;
                 }
-                if(s == end)
+                if (s == end)
                 {
                     strings.Add(s.Trim());
                     break;
                 }
                 begin += " " + s;
             }
+            if (strings[0] == "")
+            {
+                result = ApplicationContext.Instance.Medicines;
+            }
+            foreach (Medicine medicine in ApplicationContext.Instance.Medicines)
+            {
+                for (int i = 0; i < strings.Count - 1; i++)
+                {
+                    for (int j = 0; j < operators.Count; j++)
+                    {
+                        if (operators[j] == "&")
+                        {
+
+
+                            if (checkIfIngredientsHasString(medicine, strings[i]) && checkIfIngredientsHasString(medicine, strings[i + 1]))
+                            {
+                                temp.Add(medicine);
+                            }
+                            else
+                            {
+                                temp.Clear();
+                            }
+
+
+                        }
+                        else
+                        {
+
+                            if (checkIfIngredientsHasString(medicine, strings[i]) || checkIfIngredientsHasString(medicine, strings[i + 1]))
+                            {
+                                temp.Add(medicine);
+                            }
+                        }
+
+                    }
+                }
+                if (temp.Count == 0)
+                {
+                    continue;
+                }
+                Medicine med = (Medicine)temp[0];
+                temp.Clear();
+                result.Add(med);
+            }
             return result;
+        }
+
+        public bool checkIfIngredientsHasString(Medicine m, string str)
+        {
+            foreach (Ingredient ingredient in m.Ingredients.Values)
+            {
+                if (ingredient.Name.ToLower().Contains(str.ToLower()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public List<Entity> getAllPendingMedicines()
+        {
+            List<Entity> result = new List<Entity>();
+
+            foreach (Medicine medicine in ApplicationContext.Instance.Medicines.ToList())
+            {
+                if (medicine.Deleted == true)
+                {
+                    ApplicationContext.Instance.Medicines.Remove(medicine);
+                }
+            }
+            foreach (Entity entity in ApplicationContext.Instance.Medicines)
+            {
+                if(((Medicine)entity).Accepted == false)
+                {
+                    result.Add(entity);
+                }
+            }
+
+            return result;
+        }
+
+        public Medicine getMedicineById(string id)
+        {
+            foreach(Medicine medicine in ApplicationContext.Instance.Medicines)
+            {
+                if(medicine.ID == id)
+                {
+                    return medicine;
+                }
+            }
+            return null;
         }
     }
 }

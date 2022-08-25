@@ -5,14 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sims.UI.Dialogs.View" xmlns:converters="clr-namespace:Sims.CompositeComon.Converters"
         mc:Ignorable="d"
-        Title="UsersView" Height="450" Width="800">
+        Title="UsersView" Height="600" Width="1000">
     <Window.Resources>
         <converters:DialogStateToEnabledConverter x:Key="DialogStateToEnabledConverter"/>
     </Window.Resources>
 
     <DockPanel>
         <Grid>
-            <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid VerticalAlignment="Top" Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -22,34 +29,103 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" >
-
-                    <ComboBox Name="UserType" Text="User type" SelectedValue="{Binding Path=FilterType}">
+                    <Label Content="Sort by:"/>
+                    <ComboBox Text="Sort by" Width="80" Name="Sortby" SelectedValuePath="Content" SelectedValue="{Binding Path=UserSortBy}">
+                        <ComboBoxItem Content="First name"/>
+                        <ComboBoxItem Content="Last name"/>
+                    </ComboBox>
+                    <Label Content="Sort type:"/>
+                    <ComboBox Text="Sort type" Width="80" Name="Sorttype" SelectedValuePath="Content" SelectedValue="{Binding Path=UserSortType}">
+                        <ComboBoxItem Content="Ascending"/>
+                        <ComboBoxItem Content="Descending"/>
+                    </ComboBox>
+                    <Label Content="Filter by user type:"/>
+                    <ComboBox Name="Use_Type" Text="User type" SelectedValuePath="Content" SelectedValue="{Binding Path=FilterType}">
                         <ComboBoxItem Content="Pharmacist"/>
                         <ComboBoxItem Content="Manager"/>
                         <ComboBoxItem Content="Doctor"/>
                     </ComboBox>
-                    <Button Width="30" Height="30" VerticalAlignment="Center" Command="{Binding FilterCommand}">
+                    <Button Width="100" Height="30" Content="Filter and sort" VerticalAlignment="Center" Command="{Binding FilterCommand}">
 
                     </Button>
+
+                    <Button Width="100" Height="30" Content="Refresh" Command="{Binding RefreshCommand}"/>
                 </StackPanel>
 
                 <DataGrid x:Name="DataGrid" Grid.Column="0" Grid.Row="1" SelectionMode="Single" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
             SelectedItem="{Binding SelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="*" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="First name" Binding="{Binding FirstName, Mode=OneWay}"/>
-                        <DataGridTextColumn Header="Last name" Binding="{Binding LastName, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="First name" CanUserSort="False" Binding="{Binding FirstName, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Last name" CanUserSort="False" Binding="{Binding LastName, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="JMBG" CanUserSort="False" Binding="{Binding Jmbg, Mode=OneWay}"/>
                         <DataGridTextColumn Header="Email" CanUserSort="False" Binding="{Binding Email, Mode=OneWay}"/>
                         <DataGridTextColumn Header="Phone" CanUserSort="False" Binding="{Binding Phone, Mode=OneWay}"/>
                         <DataGridTextColumn Header="User type" CanUserSort="False" Binding="{Binding UserType, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Is blocked" CanUserSort="False" Binding="{Binding Blocked, Mode=OneWay}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
+            <Grid Grid.Row="1" Height="300" IsEnabled="{Binding DialogState, Converter={StaticResource DialogStateToEnabledConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
+                <Label Content="JMBG: " Grid.Row="0" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.Jmbg, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="0" Width="200" Margin="0,5,0,5"/>
 
+                <Label Content="Email: " Grid.Row="1" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5"/>
 
+                <Label Content="Password: " Grid.Row="2" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="2" Width="200" Margin="0,5,0,5"/>
 
+                <Label Content="First name: " Grid.Row="3" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="3" Width="200" Margin="0,5,0,5"/>
+
+                <Label Content="Last name: " Grid.Row="4" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.LastName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="4" Width="200" Margin="0,5,0,5"/>
+
+                <Label Content="Phone: " Grid.Row="5" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=SelectedItem.Phone, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+                                         Grid.Column="1" Grid.Row="5" Width="200" Margin="0,5,0,5"/>
+
+                <Label Content="User type: " Grid.Row="6" Grid.Column="0"/>
+                <ComboBox Text="User Type" Grid.Row="6" Grid.Column="1" Width="80" Name="UserType" SelectedValuePath="Content" SelectedValue="{Binding Path=SelectedItem.UserType}">
+                    <ComboBoxItem Content="Doctor"/>
+                    <ComboBoxItem Content="Pharmacist"/>
+                </ComboBox>
+
+            </Grid>
+            <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Vertical"  HorizontalAlignment="Right"  Grid.RowSpan="5">
+                <Button Grid.Column="3" Grid.Row="1" Content="Add" Command="{Binding AddCommand}" Margin="5" />
+                <Button Grid.Column="3" Grid.Row="2" Content="Edit" Command="{Binding EditCommand}" Margin="5" />
+                <Button Grid.Column="3" Grid.Row="3" Content="Delete" Command="{Binding DeleteCommand}" Margin="5" />
+                <Button Grid.Column="3" Grid.Row="4" IsDefault="True" Content="Ok" Command="{Binding OkCommand}" Margin="5" />
+                <Button Grid.Column="3" Grid.Row="5" IsCancel="True" Content="Cancel" Command="{Binding CancelCommand}" Margin="5" />
+                <Button Grid.Column="0" Grid.Row="6" Content="Block user" Command="{Binding BlockCommand}" Margin="5"/>
+                <Button Grid.Column="0" Grid.Row="7" Content="Unblock user" Command="{Binding UnblockCommand}" Margin="5"/>
+            </StackPanel>
         </Grid>
+
     </DockPanel>
-    
-    
+
+
 </Window>

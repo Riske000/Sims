@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 C:\Users\neman\Desktop\Sims\Sims\Sims\App.xaml
-6857225071
+5-250357499
 
-39-213887338
+44744112357
 19983234635
-MainWindow.xaml;UI\Components\Login\View\LoginView.xaml;UI\Components\Toolbar\View\ToolbarView.xaml;UI\Dialogs\View\MedicinesView.xaml;UI\Dialogs\View\PendingMedicines.xaml;UI\Dialogs\View\UsersView.xaml;
+MainWindow.xaml;UI\Components\Login\View\LoginView.xaml;UI\Components\Toolbar\View\ToolbarView.xaml;UI\Dialogs\View\MedicinesView.xaml;UI\Dialogs\View\UsersView.xaml;
 
 False
 

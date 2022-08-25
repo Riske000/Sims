@@ -16,6 +16,7 @@ namespace Sims.Model
         private string lastName;
         private string phone;
         private UserType userType;
+        private Boolean blocked;
 
         public string Jmbg
         {
@@ -65,7 +66,13 @@ namespace Sims.Model
 
         public override string Validate(string columnName)
         {
-            throw new NotImplementedException();
+            return null;
+        }
+
+        public Boolean Blocked
+        {
+            get { return blocked; }
+            set { blocked = value; OnPropertyChanged("Blocked"); }
         }
 
         protected override void ValidateSelf()

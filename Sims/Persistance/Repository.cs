@@ -22,6 +22,17 @@ namespace Sims.Persistance
 
         public IEnumerable<Entity> GetAll()
         {
+            if(ApplicationContext.Instance.Get(typeof(TEntity)).First() is Medicine)
+            {
+                foreach(Medicine medicine in ApplicationContext.Instance.Medicines.ToList())
+                {
+                    if(medicine.Deleted == true)
+                    {
+                        ApplicationContext.Instance.Medicines.Remove(medicine);
+                    }
+                }
+            }
+
             return ApplicationContext.Instance.Get(typeof(TEntity));
         }
 

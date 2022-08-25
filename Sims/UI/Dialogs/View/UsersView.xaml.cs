@@ -24,7 +24,7 @@ namespace Sims.UI.Dialogs.View
         {
             InitializeComponent();
 
-            DataContext = new UsersViewModel(this);
+            DataContext = new UsersController(this);
         }
     }
 }
