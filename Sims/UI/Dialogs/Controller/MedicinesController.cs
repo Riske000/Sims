@@ -24,19 +24,23 @@ namespace Sims.UI.Dialogs.ViewModel
         private RelayCommand searchCommand;
         private string searchText;
         private ObservableCollection<IngredientTableModel> ingredientTableModels;
-        private RelayCommand exitCommand;
         private string sortType;
         private string category;
         private string quantity;
         private string price1;
         private string price2;
-        private Entity ingredientSelectedItem;
+        private IngredientTableModel ingredientSelectedItem;
         private RelayCommand addIngredientToMedicineCommand;
+        private RelayCommand removeIngredientFromMedicineCommand;
         private float amount;
         private ComboData<Ingredient> ingredientToAdd;
         private int amountToAdd;
         private Nullable<DateTime> dayOfAdding;
         private RelayCommand addAmountOfMedicineCommand;
+        private RelayCommand acceptMedicineCommand;
+        private RelayCommand declineMedicineCommand;
+        private string reasonFarmacist;
+        private string reasonDoctor;
         public MedicinesController(MedicinesView view) : base(view, typeof(Medicine))
         {
             Init();
@@ -61,7 +65,7 @@ namespace Sims.UI.Dialogs.ViewModel
             }
         }
 
-        public Entity IngredientSelectedItem
+        public IngredientTableModel IngredientSelectedItem
         {
             get { return ingredientSelectedItem; }
             set
@@ -130,19 +134,37 @@ namespace Sims.UI.Dialogs.ViewModel
                 return addIngredientToMedicineCommand ?? (addIngredientToMedicineCommand = new RelayCommand(param => this.AddIngredientToMedicineCommandExecute(), param => this.CanAddIngredientToMedicineCommandExecute()));
             }
         }
-        public RelayCommand ExitCommand
+
+        public RelayCommand RemoveIngredientFromMedicineCommand
         {
             get
             {
-                return exitCommand ?? (exitCommand = new RelayCommand(param => this.ExitCommandExecute(), param => this.CanExitCommandExecute()));
+                return removeIngredientFromMedicineCommand ?? (removeIngredientFromMedicineCommand = new RelayCommand(param => this.RemoveIngredientFromMedicineCommandExecute(), param => this.CanRemoveIngredientFromMedicineCommandExecute()));
+
             }
         }
-
         public RelayCommand AddAmountOfMedicineCommand
         {
             get
             {
                 return addAmountOfMedicineCommand ?? (addAmountOfMedicineCommand = new RelayCommand(param => this.AddAmountOfMedicineCommandExecute(), param => this.CanAddAmountOfMedicineCommandExecute()));
+            }
+        }
+
+        public RelayCommand AcceptMedicineCommand
+        {
+            get
+            {
+                return acceptMedicineCommand ?? (acceptMedicineCommand = new RelayCommand(param => this.AcceptMedicineCommandExecute(), param => this.CanAcceptMedicineCommandExecute()));
+
+            }
+        }
+
+        public RelayCommand DeclineMedicineCommand
+        {
+            get
+            {
+                return declineMedicineCommand ?? (declineMedicineCommand = new RelayCommand(param => this.DeclineMedicineCommandExecute(), param => this.CanDeclineMedicineCommandExecute()));
             }
         }
         public bool DataGridEnabled { get => dataGridEnabled; set => dataGridEnabled = value; }
@@ -218,16 +240,21 @@ namespace Sims.UI.Dialogs.ViewModel
             set { dayOfAdding = value; OnPropertyChanged("DayOfAdding"); }
         }
 
+        public string ReasonFarmacist
+        {
+            get { return reasonFarmacist; }
+            set { reasonFarmacist = value; OnPropertyChanged("ReasonFarmacist"); }
+        }
+
+        public string ReasonDoctor
+        {
+            get { return reasonDoctor; }
+            set { reasonDoctor = value; OnPropertyChanged("ReasonDoctor"); }
+        }
+
         protected override void Init()
         {
-            if (ApplicationContext.Instance.User.UserType != UserType.Manager)
-            {
-                Items = new ObservableCollection<Entity>(service.getAllPendingMedicines());
-            }
-            else
-            {
-                Items = new ObservableCollection<Entity>(service.GetAll());
-            }
+            Items = new ObservableCollection<Entity>(service.GetAll());
         }
 
         protected void SearchCommandExecute()
@@ -248,9 +275,23 @@ namespace Sims.UI.Dialogs.ViewModel
             ApplicationContext.Instance.SaveMedicines();
         }
 
+
         protected virtual bool CanAddIngredientToMedicineCommandExecute()
         {
             return Amount != 0 && IngredientToAdd != null && SelectedItem != null;
+        }
+
+        protected void RemoveIngredientFromMedicineCommandExecute()
+        {
+          ((Medicine)SelectedItem).Ingredients.Remove(IngredientSelectedItem.Quantity);
+            OnPropertyChanged("IngredientTableModels");
+            OnPropertyChanged("Medicine");
+            ApplicationContext.Instance.SaveMedicines();
+        }
+
+        protected virtual bool CanRemoveIngredientFromMedicineCommandExecute()
+        {
+            return selectedItem != null && IngredientSelectedItem != null;
         }
 
         protected void AddAmountOfMedicineCommandExecute()
@@ -278,6 +319,36 @@ namespace Sims.UI.Dialogs.ViewModel
             return SelectedItem != null && AmountToAdd != 0;
         }
 
-        
+        protected void AcceptMedicineCommandExecute()
+        {
+
+        }
+
+        protected virtual bool CanAcceptMedicineCommandExecute()
+        {
+            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true;
+        }
+
+        protected void DeclineMedicineCommandExecute()
+        {
+            ((Medicine)SelectedItem).Declined = true;
+            if(ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            {
+                ((Medicine)SelectedItem).ReasonByDoctor = ApplicationContext.Instance.User.FirstName + " " + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: "  +
+                   reasonDoctor ;
+            }
+            if(ApplicationContext.Instance.User.UserType is UserType.Pharmacist)
+            {
+                ((Medicine)SelectedItem).ReasonByFarmacist = ApplicationContext.Instance.User.FirstName + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: "  +
+                   reasonFarmacist;
+            }
+            OnPropertyChanged("Medicines");
+            ApplicationContext.Instance.SaveMedicines();
+        }
+
+        protected virtual bool CanDeclineMedicineCommandExecute()
+        {
+            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true;
+        }
     }
 }

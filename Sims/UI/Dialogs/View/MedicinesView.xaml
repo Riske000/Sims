@@ -24,7 +24,6 @@
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" >
 
-                    <Button Width="30" Height="30" Command="{Binding ExitCommand}"/>
                     <Label Content="Sort:"/>
                     <ComboBox Text="Sort" Width="80" Name="Sort" SelectedValuePath="Content" SelectedValue="{Binding Path=SortType}">
                         <ComboBoxItem Content="Ascending"/>
@@ -43,7 +42,7 @@
                     <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceNotSelected}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
                     <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceSelected}" Text="{Binding Price1, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
                     <TextBox Width="150" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Visibility="{Binding PriceSelected}" Text="{Binding Price2, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
-                    <Button Width="30" Height="30" VerticalAlignment="Center" Command="{Binding SearchCommand}">
+                    <Button Width="80" Content="Search" Height="30" VerticalAlignment="Center" Command="{Binding SearchCommand}">
 
                     </Button>
                 </StackPanel>
@@ -51,7 +50,7 @@
                 <Grid Grid.Column="0" Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="500"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <DataGrid x:Name="DataGrid" Grid.Column="0" SelectionMode="Single" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
@@ -65,8 +64,8 @@
                             <DataGridTextColumn Header="Is deleted" CanUserSort="False" Binding="{Binding Deleted, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Price" CanUserSort="False" Binding="{Binding Price, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Is declined" CanUserSort="False" Binding="{Binding Declined, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Reason by farmacist" CanUserSort="False" Binding="{Binding ReasonByFarmacist, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Reason by doctor" CanUserSort="False" Binding="{Binding ReasonByDoctor, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Pharmacist approvals" CanUserSort="False" Binding="{Binding CounterForFarmacist, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Doctor approval" CanUserSort="False" Binding="{Binding CounterForDoctor, Mode=OneWay}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -76,9 +75,10 @@
                         <ComboBox Text="Ingredient" Height="30" VerticalAlignment="Top" SelectedValue="{Binding IngredientToAdd}" Width="80" DisplayMemberPath="Name" ItemsSource="{Binding Ingredients}">
                         </ComboBox>
                         <Button Width="Auto" Height="30" Content="Add ingredient" VerticalAlignment="Top" Command="{Binding AddIngredientToMedicineCommand}"/>
+                        <Button Width="Auto" Height="30" Content="Remove ingredient" VerticalAlignment="Top" Command="{Binding RemoveIngredientFromMedicineCommand}"/>
                     </StackPanel>
                     <DataGrid x:Name="DataGrid2" Grid.Column="1" SelectionMode="Single" Margin="0,30,0,0" ItemsSource="{Binding IngredientTableModels, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto"
-            SelectedItem="{Binding IngredientSelectedItem}" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False" ColumnWidth="Auto">
+            SelectedItem="{Binding IngredientSelectedItem}" ColumnWidth="Auto" Height="Auto" AutoGenerateColumns="False" CanUserAddRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Amount of ingredient in grams" Binding="{Binding Quantity}"/>
                             <DataGridTextColumn Header="Name of ingredient" Binding="{Binding IngredientName}"/>
@@ -118,26 +118,30 @@
 
                     <Label Grid.Column="0" Grid.Row="0" Content="Code: " />
                     <TextBox Text="{Binding Path=SelectedItem.Code, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
-                                         Grid.Column="1" Grid.Row="0" Width="200" Margin="0,5,0,5"/>
+                                         Grid.Column="1" Grid.Row="0" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Patient]}" Foreground="Red" Grid.Row="0" Grid.Column="2" Margin="15,0,0,0"/>-->
 
                     <Label Grid.Column="0" Grid.Row="1" Content="Name: " />
                     <TextBox Text="{Binding Path=SelectedItem.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
-                                         Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5"/>
+                                         Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Price]}" Foreground="Red" Grid.Row="1" Grid.Column="2" Margin="15,0,0,0"/>-->
                     <Label Grid.Column="0" Grid.Row="2" Content="Producer: "/>
                     <TextBox Text="{Binding Path=SelectedItem.Producer, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                                         Grid.Row="2" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
-
-                    <Label Grid.Column="0" Grid.Row="3" Content="Quantity: "/>
-                    <TextBox Text="{Binding Path=SelectedItem.Quantity, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                                         Grid.Row="3" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
-                    <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Ingredients]}" Foreground="Red" Grid.Row="2" Grid.Column="2" Margin="15,0,0,0"/>-->
-
+                                         Grid.Row="2" Grid.Column="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
+                    
                     <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Alergens]}" Foreground="Red" Grid.Row="3" Grid.Column="2" Margin="15,0,0,0"/>-->
-                    <Label Grid.Column="0" Grid.Row="4" Content="Price: "/>
+                    <Label Grid.Column="0" Grid.Row="3" Content="Price: "/>
                     <TextBox Text="{Binding Path=SelectedItem.Price, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                                         Grid.Row="4" Grid.Column="1" Width="200" Margin="0,5,0,5"/>
+                                         Grid.Row="3" Grid.Column="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
+
+                    <Label Grid.Column="0" Grid.Row="5" Content="Reason by farmacist: "/>
+                    <TextBox Text="{Binding Path=SelectedItem.ReasonByFarmacist, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                                         Grid.Row="5" Grid.Column="1" Width="Auto" Margin="0,5,0,5"/>
+
+                    <Label Grid.Column="0" Grid.Row="6" Content="Reason by doctor: "/>
+                    <TextBox Text="{Binding Path=SelectedItem.ReasonByDoctor, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                                         Grid.Row="6" Grid.Column="1" Width="Auto" Margin="0,5,0,5"/>
+
                 </Grid>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Margin="0,232,10,10" HorizontalAlignment="Right" Grid.RowSpan="2" >
@@ -153,8 +157,11 @@
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -167,6 +174,14 @@
                     <DatePicker Grid.Row="1" Name="DatePicker1" Grid.Column="1" SelectedDate="{Binding DayOfAdding}"/>
 
                     <Button Content="Add amount" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding AddAmountOfMedicineCommand}"/>
+
+                    <Label Content="Reason of declining medicine: farmacist"  Grid.Column="0" Grid.Row="2" Margin="0,50,0,0"/>
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding ReasonFarmacist, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Width="200" Grid.ColumnSpan="2" Margin="0,50,0,0"/>
+                    <Label Content="Reason of declining medicine: doctor" Grid.Column="0" Grid.Row="3" />
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding ReasonDoctor, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Width="200" Grid.ColumnSpan="2"/>
+
+                    <Button Grid.Column="3" Grid.Row="2" Content="Accept medicine" Command="{Binding AcceptMedicineCommand}" Margin="100,50,0,0"/>
+                    <Button Grid.Column="3" Grid.Row="3" Content="Reject medicine" Command="{Binding DeclineMedicineCommand}" Margin="100,0,0,0"/>
                 </Grid>
                 
             </Grid>

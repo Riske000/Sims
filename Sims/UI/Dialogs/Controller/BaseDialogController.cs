@@ -100,13 +100,6 @@ namespace Sims.UI.Dialogs.ViewModel
             }
         }
 
-        public RelayCommand ExitCommand
-        {
-            get
-            {
-                return exitCommand ?? (exitCommand = new RelayCommand(param => this.ExitCommandExecute(), param => this.CanExitCommandExecute()));
-            }
-        }
         #endregion CommandProperties
 
         #region Properties
@@ -301,18 +294,6 @@ namespace Sims.UI.Dialogs.ViewModel
         {
 
             return DialogState != DialogState.View;
-        }
-
-        protected void ExitCommandExecute()
-        {
-            ApplicationContext.Instance.Save();
-            System.Windows.Application.Current.Shutdown();
-        }
-
-        protected bool CanExitCommandExecute()
-        {
-
-            return true;
         }
 
         #endregion
