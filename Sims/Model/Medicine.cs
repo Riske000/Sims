@@ -21,6 +21,7 @@ namespace Sims.Model
         private string reasonByDoctor;
         private int counterForFarmacist;
         private int counterForDoctor;
+        private int clicks = 0;
         public Medicine()
         {
             this.ingredients = new Dictionary<double, Ingredient>();
@@ -104,6 +105,11 @@ namespace Sims.Model
             set { counterForDoctor = value; OnPropertyChanged("CounterForDoctor"); }
         }
 
+        public int Clicks
+        {
+            get { return clicks; }
+            set { clicks = value; }
+        }
         public override void InitExportList()
         {
             throw new NotImplementedException();

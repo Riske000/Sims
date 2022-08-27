@@ -252,6 +252,7 @@ namespace Sims.UI.Dialogs.ViewModel
             set { reasonDoctor = value; OnPropertyChanged("ReasonDoctor"); }
         }
 
+
         protected override void Init()
         {
             Items = new ObservableCollection<Entity>(service.GetAll());
@@ -283,7 +284,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected void RemoveIngredientFromMedicineCommandExecute()
         {
-          ((Medicine)SelectedItem).Ingredients.Remove(IngredientSelectedItem.Quantity);
+            ((Medicine)SelectedItem).Ingredients.Remove(IngredientSelectedItem.Quantity);
             OnPropertyChanged("IngredientTableModels");
             OnPropertyChanged("Medicine");
             ApplicationContext.Instance.SaveMedicines();
@@ -321,25 +322,60 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected void AcceptMedicineCommandExecute()
         {
+            if (ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            {
+                ((Medicine)SelectedItem).CounterForDoctor++;
+            }
+            if (ApplicationContext.Instance.User.UserType is UserType.Pharmacist)
+            {
+                ((Medicine)SelectedItem).CounterForFarmacist++;
+                ((Medicine)SelectedItem).Clicks++;
+            }
+            if (((Medicine)SelectedItem).CounterForFarmacist == 2 && ((Medicine)SelectedItem).CounterForDoctor == 1)
+            {
+                ((Medicine)SelectedItem).Accepted = true;
+            }
+            ApplicationContext.Instance.SaveMedicines();
+            OnPropertyChanged("Medicines");
 
         }
 
         protected virtual bool CanAcceptMedicineCommandExecute()
         {
-            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true;
+            if (!CanDoctorAccept())
+            {
+                return false;
+            }
+            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true && 
+                ((Medicine)SelectedItem).Clicks == 0;
         }
 
+        public bool CanDoctorAccept()
+        {
+            if(SelectedItem == null)
+            {
+                return true;
+            }
+            if(ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            {
+                if(((Medicine)SelectedItem).CounterForDoctor == 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         protected void DeclineMedicineCommandExecute()
         {
             ((Medicine)SelectedItem).Declined = true;
-            if(ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            if (ApplicationContext.Instance.User.UserType is UserType.Doctor)
             {
-                ((Medicine)SelectedItem).ReasonByDoctor = ApplicationContext.Instance.User.FirstName + " " + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: "  +
-                   reasonDoctor ;
+                ((Medicine)SelectedItem).ReasonByDoctor = ApplicationContext.Instance.User.FirstName + " " + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: " +
+                   reasonDoctor;
             }
-            if(ApplicationContext.Instance.User.UserType is UserType.Pharmacist)
+            if (ApplicationContext.Instance.User.UserType is UserType.Pharmacist)
             {
-                ((Medicine)SelectedItem).ReasonByFarmacist = ApplicationContext.Instance.User.FirstName + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: "  +
+                ((Medicine)SelectedItem).ReasonByFarmacist = ApplicationContext.Instance.User.FirstName + ApplicationContext.Instance.User.LastName + " is declined this medicine because of: " +
                    reasonFarmacist;
             }
             OnPropertyChanged("Medicines");
