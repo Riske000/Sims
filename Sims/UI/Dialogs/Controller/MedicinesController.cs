@@ -41,6 +41,18 @@ namespace Sims.UI.Dialogs.ViewModel
         private RelayCommand declineMedicineCommand;
         private string reasonFarmacist;
         private string reasonDoctor;
+        private RelayCommand refreshMedicinesCommand;
+        int temp;
+        private RelayCommand pendingMedicnesCommand;
+        private RelayCommand declinedMedicinesCommand;
+        private RelayCommand acceptedMedicinesCommand;
+        double cena1;
+        double cena2;
+        private RelayCommand usersCommand;
+        private string fullName;
+        private string typeOfUser;
+        private SelectedMedicines selectedMedicines;
+        private RelayCommand refreshThisTabCommand;
         public MedicinesController(MedicinesView view) : base(view, typeof(Medicine))
         {
             Init();
@@ -49,6 +61,8 @@ namespace Sims.UI.Dialogs.ViewModel
             SortType = "Ascending";
             Category = "Code";
             DayOfAdding = null;
+            FullName = ApplicationContext.Instance.User.FirstName + " " + ApplicationContext.Instance.User.LastName;
+            TypeOfUser = ApplicationContext.Instance.User.UserType.ToString();
         }
 
         public override Entity SelectedItem
@@ -88,6 +102,38 @@ namespace Sims.UI.Dialogs.ViewModel
             get { return category != "Price" ? Visibility.Visible : Visibility.Collapsed; }
         }
 
+        public Visibility ManagerLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType == UserType.Manager ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility ManagerNotLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType != UserType.Manager ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility DoctorLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType == UserType.Doctor ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility DoctorNotLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType != UserType.Doctor ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility PharmacistLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType == UserType.Pharmacist ? Visibility.Visible : Visibility.Collapsed; }
+        }
+        public Visibility PharmacistNotLogged
+        {
+            get { return ApplicationContext.Instance.User.UserType != UserType.Pharmacist ? Visibility.Visible : Visibility.Collapsed; }
+        }
+        //public Visibility QuantitySelected
+        //{
+        //    get { return category == "Quantity" ? Visibility.Visible : Visibility.Collapsed; }
+        //}
         public ObservableCollection<IngredientTableModel> IngredientTableModels
         {
             get
@@ -167,6 +213,55 @@ namespace Sims.UI.Dialogs.ViewModel
                 return declineMedicineCommand ?? (declineMedicineCommand = new RelayCommand(param => this.DeclineMedicineCommandExecute(), param => this.CanDeclineMedicineCommandExecute()));
             }
         }
+
+        public RelayCommand RefreshMedicinesCommand
+        {
+            get
+            {
+                return refreshMedicinesCommand ?? (refreshMedicinesCommand = new RelayCommand(param => this.RefreshMedicinesCommandExecute(), param => this.CanRefreshMedicinesCommandExecute()));
+            }
+        }
+
+        public RelayCommand PendingMedicinesCommand
+        {
+            get
+            {
+                return pendingMedicnesCommand ?? (pendingMedicnesCommand = new RelayCommand(param => this.PendingMedicinesCommandExecute(), param => this.CanPendingMedicinesCommandExecute()));
+            }
+        }
+
+        public RelayCommand AcceptedMedicinesCommand
+        {
+            get
+            {
+                return acceptedMedicinesCommand ?? (acceptedMedicinesCommand = new RelayCommand(param => this.AcceptedMedicinesCommandExecute(), param => this.CanAcceptedMedicinesCommandExecute()));
+            }
+        }
+
+        public RelayCommand DeclinedMedicinesCommand
+        {
+            get
+            {
+                return declinedMedicinesCommand ?? (declinedMedicinesCommand = new RelayCommand(param => this.DeclinedMedicinesCommandExecute(), param => this.CanDeclinedMedicinesCommandExecute()));
+            }
+        }
+
+        public RelayCommand UsersCommand
+        {
+            get
+            {
+                return usersCommand ?? (usersCommand = new RelayCommand(param => this.UsersCommandExecute(), param => this.CanUsersCommandExecute()));
+            }
+        }
+
+        public RelayCommand RefreshThisTabCommand
+        {
+            get
+            {
+                return refreshThisTabCommand ?? (refreshThisTabCommand = new RelayCommand(param => this.RefreshThisTabCommandExecute(), param => this.CanRefreshThisTabCommandExecute()));
+            }
+        }
+
         public bool DataGridEnabled { get => dataGridEnabled; set => dataGridEnabled = value; }
         public List<ComboData<Medicine>> Medicines { get => medicines; set => medicines = value; }
 
@@ -252,7 +347,21 @@ namespace Sims.UI.Dialogs.ViewModel
             set { reasonDoctor = value; OnPropertyChanged("ReasonDoctor"); }
         }
 
+        public int Temp { get => temp; set => temp = value; }
+        public string FullName { get => fullName; set => fullName = value; }
 
+        public string TypeOfUser
+        {
+            get { return typeOfUser; }
+            set { typeOfUser = value; }
+        }
+
+        public SelectedMedicines SelectedMedicines
+        {
+            get { return selectedMedicines; }
+            set { selectedMedicines = value; }
+
+        }
         protected override void Init()
         {
             Items = new ObservableCollection<Entity>(service.GetAll());
@@ -260,8 +369,62 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected void SearchCommandExecute()
         {
-            Items = new ObservableCollection<Entity>(service.Search(Category, SortType, SearchText, price1 == string.Empty ? 0 : Double.Parse(price1), price2 == string.Empty ? 100000 : Double.Parse(price2), 0));
-            OnPropertyChanged("Medicines");
+
+            if (category == "Quantity")
+            {
+                if (Int32.TryParse(searchText, out temp))
+                {
+                    temp = Int32.Parse(searchText);
+                }
+            }
+            else
+            {
+                temp = 0;
+            }
+            if (price1 == null || price1 == string.Empty)
+            {
+                cena1 = 0;
+            }
+            else
+            {
+                cena1 = Double.Parse(price1);
+            }
+
+            if (price2 == null || price2 == string.Empty)
+            {
+                cena2 = 1000000;
+            }
+            else
+            {
+                cena2 = Double.Parse(price2);
+            }
+            ObservableCollection<Entity> medicines = new ObservableCollection<Entity>();
+
+            switch (SelectedMedicines)
+            {
+                case SelectedMedicines.All:
+                    medicines = new ObservableCollection<Entity>(service.GetAll());
+                    Items = new ObservableCollection<Entity>(service.Search(medicines, Category, SortType, SearchText, cena1, cena2, temp));
+                    OnPropertyChanged("Medicines");
+                    break;
+                case SelectedMedicines.Pending:
+                    medicines = new ObservableCollection<Entity>(service.getAllPendingMedicines());
+                    Items = new ObservableCollection<Entity>(service.Search(medicines, Category, SortType, SearchText, cena1, cena2, temp));
+                    OnPropertyChanged("Medicines");
+                    break;
+                case SelectedMedicines.Accepted:
+                    medicines = new ObservableCollection<Entity>(service.getAllAcceptedMedicines());
+                    Items = new ObservableCollection<Entity>(service.Search(medicines, Category, SortType, SearchText, cena1, cena2, temp));
+                    OnPropertyChanged("Medicines");
+                    break;
+                case SelectedMedicines.Declined:
+                    medicines = new ObservableCollection<Entity>(service.getAllDeclinedMedicines());
+                    Items = new ObservableCollection<Entity>(service.Search(medicines, Category, SortType, SearchText, cena1, cena2, temp));
+                    OnPropertyChanged("Medicines");
+                    break;
+            }
+
+
         }
         //Search(string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
         protected virtual bool CanSearchCommandExecute()
@@ -329,7 +492,11 @@ namespace Sims.UI.Dialogs.ViewModel
             if (ApplicationContext.Instance.User.UserType is UserType.Pharmacist)
             {
                 ((Medicine)SelectedItem).CounterForFarmacist++;
-                ((Medicine)SelectedItem).Clicks++;
+                Accept accept = new Accept();
+                accept.Medicine = (Medicine)SelectedItem;
+                accept.PharmacistWhoAccepted = ApplicationContext.Instance.User;
+                ApplicationContext.Instance.Accepts.Add(accept);
+                ApplicationContext.Instance.SaveAccepts();
             }
             if (((Medicine)SelectedItem).CounterForFarmacist == 2 && ((Medicine)SelectedItem).CounterForDoctor == 1)
             {
@@ -346,19 +513,35 @@ namespace Sims.UI.Dialogs.ViewModel
             {
                 return false;
             }
-            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true && 
-                ((Medicine)SelectedItem).Clicks == 0;
+            if (!CanPharmacistAccept())
+            {
+                return false;
+            }
+            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true &&
+                 ApplicationContext.Instance.User.UserType != UserType.Manager;
+        }
+
+        public bool CanPharmacistAccept()
+        {
+            foreach (Accept accept in ApplicationContext.Instance.Accepts)
+            {
+                if (accept.Medicine == selectedItem && accept.PharmacistWhoAccepted == ApplicationContext.Instance.User)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public bool CanDoctorAccept()
         {
-            if(SelectedItem == null)
+            if (SelectedItem == null)
             {
                 return true;
             }
-            if(ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            if (ApplicationContext.Instance.User.UserType is UserType.Doctor)
             {
-                if(((Medicine)SelectedItem).CounterForDoctor == 1)
+                if (((Medicine)SelectedItem).CounterForDoctor == 1)
                 {
                     return false;
                 }
@@ -384,7 +567,114 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual bool CanDeclineMedicineCommandExecute()
         {
-            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true;
+            return SelectedItem != null && ((Medicine)SelectedItem).Accepted != true && ((Medicine)SelectedItem).Declined != true
+                && ApplicationContext.Instance.User.UserType != UserType.Manager;
+        }
+
+        protected void RefreshMedicinesCommandExecute()
+        {
+            searchText = "";
+            quantity = "";
+            Items = new ObservableCollection<Entity>(service.GetAll());
+            selectedMedicines = SelectedMedicines.All;
+            OnPropertyChanged("SearchText");
+            OnPropertyChanged("Price1");
+            OnPropertyChanged("Price2");
+            OnPropertyChanged("Quantity");
+            OnPropertyChanged("Users");
+        }
+
+        protected virtual bool CanRefreshMedicinesCommandExecute()
+        {
+            return true;
+        }
+
+        protected void PendingMedicinesCommandExecute()
+        {
+            Items = new ObservableCollection<Entity>(service.getAllPendingMedicines());
+            selectedMedicines = SelectedMedicines.Pending;
+            OnPropertyChanged("Medicines");
+        }
+
+        protected bool CanPendingMedicinesCommandExecute()
+        {
+            return true;
+        }
+
+        protected void AcceptedMedicinesCommandExecute()
+        {
+            Items = new ObservableCollection<Entity>(service.getAllAcceptedMedicines());
+            selectedMedicines = SelectedMedicines.Accepted;
+            OnPropertyChanged("Medicines");
+        }
+
+        protected bool CanAcceptedMedicinesCommandExecute()
+        {
+            return true;
+        }
+
+        protected void DeclinedMedicinesCommandExecute()
+        {
+            Items = new ObservableCollection<Entity>(service.getAllDeclinedMedicines());
+            selectedMedicines = SelectedMedicines.Declined;
+            OnPropertyChanged("Medicines");
+        }
+
+        protected bool CanDeclinedMedicinesCommandExecute()
+        {
+            return true;
+        }
+
+        protected void UsersCommandExecute()
+        {
+            UsersView view = new UsersView();
+            view.ShowDialog();
+        }
+
+        protected bool CanUsersCommandExecute()
+        {
+            return true;
+        }
+
+        protected void RefreshThisTabCommandExecute()
+        {
+            switch (SelectedMedicines)
+            {
+                case SelectedMedicines.All:
+                    Items = new ObservableCollection<Entity>(service.GetAll());
+                    OnPropertyChanged("Medicines");
+                    searchText = "";
+                    quantity = "";
+                    OnPropertyChanged("SearchText");
+                    break;
+                case SelectedMedicines.Pending:
+                    Items = new ObservableCollection<Entity>(service.getAllPendingMedicines());
+                    OnPropertyChanged("Medicines");
+                    searchText = "";
+                    quantity = "";
+                    OnPropertyChanged("SearchText");
+                    break;
+                case SelectedMedicines.Accepted:
+                    Items = new ObservableCollection<Entity>(service.getAllAcceptedMedicines());
+                    OnPropertyChanged("Medicines");
+                    searchText = "";
+                    quantity = "";
+                    OnPropertyChanged("SearchText");
+                    break;
+                case SelectedMedicines.Declined:
+                    Items = new ObservableCollection<Entity>(service.getAllDeclinedMedicines());
+                    OnPropertyChanged("Medicines");
+                    searchText = "";
+                    quantity = "";
+                    OnPropertyChanged("SearchText");
+                    break;
+            }
+        }
+
+        protected bool CanRefreshThisTabCommandExecute()
+        {
+            return true;
         }
     }
 }
+

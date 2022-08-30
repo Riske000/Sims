@@ -99,8 +99,6 @@ namespace Sims.UI.Components.Login.ViewModel
                 dialog.Close();
                 MedicinesView view = new MedicinesView();
                 view.ShowDialog();
-                UsersView view2 = new UsersView();
-                view2.ShowDialog();
             }
             if (counter == 3)
             {

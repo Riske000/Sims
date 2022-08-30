@@ -19,9 +19,11 @@ namespace Sims.Model
         private List<Entity> ingredients = new List<Entity>();
         private List<Entity> medicines = new List<Entity>();
         private List<ScheudledAddition> scheudledAddiotons = new List<ScheudledAddition>();
+        private List<Accept> accepts = new List<Accept>();
         private MainWindowViewModel mainWindowViewModel;
         private User user;
         private MedicineService service = new MedicineService();
+        private UserService userService = new UserService();    
 
 
 
@@ -41,6 +43,7 @@ namespace Sims.Model
                     instance.LoadIngredients();
                     instance.LoadMedicines();
                     instance.LoadScheudledAdditions();
+                    instance.LoadAccepts();
                     foreach (ScheudledAddition scheudledAddition in ApplicationContext.Instance.ScheudledAddiotons)
                     {
                         Instance.AddAmount(scheudledAddition);
@@ -73,6 +76,11 @@ namespace Sims.Model
         {
             get { return scheudledAddiotons; }
             set { scheudledAddiotons = value; }
+        }
+        public List<Accept> Accepts
+        {
+            get { return accepts; }
+            set { accepts = value; }
         }
 
         public MainWindowViewModel MainWindowViewModel
@@ -159,6 +167,31 @@ namespace Sims.Model
             ingredients = result;
         }
 
+        public void LoadAccepts()
+        {
+            List<Accept> result = new List<Accept>();
+
+            if (!File.Exists("accepts.txt"))
+            {
+                accepts = result;
+                return;
+            }
+
+            StreamReader reader = new StreamReader("accepts.txt");
+            string line;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] data = line.Split('|');
+
+                Accept accept = new Accept();
+                accept.Medicine = service.getMedicineById(data[0]);
+                accept.PharmacistWhoAccepted = userService.getUserByID(data[1]);
+                result.Add(accept);
+            }
+
+            accepts = result;
+        }
         public void LoadMedicines()
         {
             List<Entity> result = new List<Entity>();
@@ -186,6 +219,10 @@ namespace Sims.Model
                 string[] data2 = data[5].Split(';');
                 foreach (string s in data2)
                 {
+                    if(s == String.Empty)
+                    {
+                        continue;
+                    }
                     string[] data3 = s.Split('_');
                     double d = double.Parse(data3[0]);
                     medicine.Ingredients.Add(d, findByID(int.Parse(data3[1])));
@@ -254,6 +291,26 @@ namespace Sims.Model
             }
         }
 
+        public void SaveAccepts()
+        {
+            if(accepts == null)
+            {
+                return;
+            }
+
+            using (StreamWriter file = new StreamWriter("accepts.txt"))
+            {
+                foreach(Accept accept in accepts)
+                {
+                    string line = string.Empty;
+
+                    line += accept.Medicine.ID + "|";
+                    line += accept.PharmacistWhoAccepted.ID;
+
+                    file.WriteLine(line);
+                }
+            }
+        }
 
 
         public Ingredient findByID(int id)
@@ -340,6 +397,10 @@ namespace Sims.Model
                     {
                         line += kvp.Key + "_";
                         line += kvp.Value.ID + ";";
+                    }
+                    if(((Medicine)entity).Ingredients.Count == 0)
+                    {
+                        line += "|";
                     }
                     line = line.Remove(line.Length - 1, 1) + "|";
                     line += ((Medicine)entity).Accepted + "|";

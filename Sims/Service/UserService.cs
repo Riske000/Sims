@@ -60,5 +60,10 @@ namespace Sims.Service
         {
             return userRepository.CheckJmbg(jmbg);
         }
+
+        public User getUserByID(string id)
+        {
+            return userRepository.getUserByID(id);
+        }
     }
 }

@@ -83,6 +83,18 @@ namespace Sims.Persistance
             return null;
         }
 
+        public User getUserByID(string id)
+        {
+            foreach(User user in ApplicationContext.Instance.Users)
+            {
+                if(user.ID == id)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
+
         public bool CheckEmail(string email)
         {
             foreach(User user in ApplicationContext.Instance.Users)

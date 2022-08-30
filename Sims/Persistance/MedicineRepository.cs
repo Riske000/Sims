@@ -2,6 +2,7 @@
 using Sims.UI.Dialogs.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,14 +26,14 @@ namespace Sims.Persistance
             return result;
         }
 
-        public IEnumerable<Entity> Search(string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
+        public IEnumerable<Entity> Search( ObservableCollection<Entity> medicines, string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
         {
             List<Entity> result = new List<Entity>();
 
             switch (category)
             {
                 case "Code":
-                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in medicines)
                     {
                         if (((Medicine)entity).Code.ToLower().Contains(term))
                         {
@@ -41,7 +42,7 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Name":
-                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in medicines)
                     {
                         if (((Medicine)entity).Name.ToLower().Contains(term))
                         {
@@ -50,7 +51,7 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Producer":
-                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in medicines)
                     {
                         if (((Medicine)entity).Producer.ToLower().Contains(term))
                         {
@@ -59,7 +60,7 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Price":
-                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in medicines)
                     {
                         if (price1 <= ((Medicine)entity).Price && ((Medicine)entity).Price <= price2)
                         {
@@ -68,7 +69,7 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Quantity":
-                    foreach (Entity entity in ApplicationContext.Instance.Medicines)
+                    foreach (Entity entity in medicines)
                     {
                         if (((Medicine)entity).Quantity >= quantity)
                         {
@@ -77,7 +78,7 @@ namespace Sims.Persistance
                     }
                     break;
                 case "Ingredients":
-                    result = searchIngredients(term);
+                    result = searchIngredients(medicines, term);
                     break;
             }
 
@@ -120,7 +121,7 @@ namespace Sims.Persistance
 
         }
 
-        public List<Entity> searchIngredients(string term = "")
+        public List<Entity> searchIngredients(ObservableCollection<Entity> medicines, string term = "")
         {
             List<Entity> result = new List<Entity>();
             List<Entity> temp = new List<Entity>();
@@ -148,9 +149,9 @@ namespace Sims.Persistance
             }
             if (strings[0] == "")
             {
-                result = ApplicationContext.Instance.Medicines;
+                result = medicines.ToList();
             }
-            foreach (Medicine medicine in ApplicationContext.Instance.Medicines)
+            foreach (Medicine medicine in medicines)
             {
                 for (int i = 0; i < strings.Count - 1; i++)
                 {
@@ -206,28 +207,6 @@ namespace Sims.Persistance
             return false;
         }
 
-        public List<Entity> getAllPendingMedicines()
-        {
-            List<Entity> result = new List<Entity>();
-
-            foreach (Medicine medicine in ApplicationContext.Instance.Medicines.ToList())
-            {
-                if (medicine.Deleted == true)
-                {
-                    ApplicationContext.Instance.Medicines.Remove(medicine);
-                }
-            }
-            foreach (Entity entity in ApplicationContext.Instance.Medicines)
-            {
-                if(((Medicine)entity).Accepted == false)
-                {
-                    result.Add(entity);
-                }
-            }
-
-            return result;
-        }
-
         public Medicine getMedicineById(string id)
         {
             foreach(Medicine medicine in ApplicationContext.Instance.Medicines)
@@ -238,6 +217,51 @@ namespace Sims.Persistance
                 }
             }
             return null;
+        }
+
+        public ObservableCollection<Medicine> getAllPendingMedicines()
+        {
+            ObservableCollection<Medicine> result = new ObservableCollection<Medicine>();
+
+            foreach (Medicine medicine in ApplicationContext.Instance.Medicines)
+            {
+                if(medicine.Accepted == false && medicine.Declined == false)
+                {
+                    result.Add(medicine);
+                }
+            }
+
+            return result;
+        }
+
+        public ObservableCollection<Medicine> getAllAcceptedMedicines()
+        {
+            ObservableCollection<Medicine> result = new ObservableCollection<Medicine>();
+
+            foreach (Medicine medicine in ApplicationContext.Instance.Medicines)
+            {
+                if (medicine.Accepted == true && medicine.Declined == false)
+                {
+                    result.Add(medicine);
+                }
+            }
+
+            return result;
+        }
+
+        public ObservableCollection<Medicine> getAllDeclinedMedicines()
+        {
+            ObservableCollection<Medicine> result = new ObservableCollection<Medicine>();
+
+            foreach (Medicine medicine in ApplicationContext.Instance.Medicines)
+            {
+                if (medicine.Accepted == false && medicine.Declined == true)
+                {
+                    result.Add(medicine);
+                }
+            }
+
+            return result;
         }
     }
 }

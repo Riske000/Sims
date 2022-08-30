@@ -347,6 +347,14 @@ namespace Sims.UI.Dialogs.ViewModel
             {
                 return false;
             }
+            if(SelectedItem is Medicine)
+            {
+                ((Medicine)SelectedItem).ReasonByDoctor = "";
+                ((Medicine)SelectedItem).ReasonByFarmacist = "";
+                ((Medicine)SelectedItem).CounterForFarmacist = 0;
+                ((Medicine)SelectedItem).CounterForDoctor = 0;
+                OnPropertyChanged("Medicines");
+            }
 
             return true;
         }
@@ -358,7 +366,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual Entity OkAfterEditDatabase()
         {
-            return null;
+            return SelectedItem;
         }
 
         #region Abstract Methods

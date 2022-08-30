@@ -2,6 +2,7 @@
 using Sims.Persistance;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,14 +43,14 @@ namespace Sims.Service
             medicineRepository.Remove(entity);
         }
 
-        public IEnumerable<Entity> Search(string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
+        public IEnumerable<Entity> Search(ObservableCollection<Entity> medicines, string category, string sortType, string term = "", double price1 = 0, double price2 = 100000000, int quantity = 0)
         {
-            return medicineRepository.Search(category, sortType, term, price1, price2, quantity);
+            return medicineRepository.Search(medicines, category, sortType, term, price1, price2, quantity);
         }
 
-        public List<Entity> searchIngredients(string term = "")
+        public List<Entity> searchIngredients(ObservableCollection<Entity> medicines,  string term = "")
         {
-            return medicineRepository.searchIngredients(term);
+            return medicineRepository.searchIngredients(medicines, term);
         }
 
         public bool checkIfIngredientsHasString(Medicine m, string str)
@@ -57,14 +58,24 @@ namespace Sims.Service
             return medicineRepository.checkIfIngredientsHasString(m, str);
         }
 
-        public List<Entity> getAllPendingMedicines()
+        public Medicine getMedicineById(string id)
+        {
+            return medicineRepository.getMedicineById(id);
+        }
+
+        public ObservableCollection<Medicine> getAllPendingMedicines()
         {
             return medicineRepository.getAllPendingMedicines();
         }
 
-        public Medicine getMedicineById(string id)
+        public ObservableCollection<Medicine> getAllAcceptedMedicines()
         {
-            return medicineRepository.getMedicineById(id);
+            return medicineRepository.getAllAcceptedMedicines();
+        }
+
+        public ObservableCollection<Medicine> getAllDeclinedMedicines()
+        {
+            return medicineRepository.getAllDeclinedMedicines();
         }
     }
 }
