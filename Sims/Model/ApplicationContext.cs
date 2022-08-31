@@ -23,7 +23,8 @@ namespace Sims.Model
         private MainWindowViewModel mainWindowViewModel;
         private User user;
         private MedicineService service = new MedicineService();
-        private UserService userService = new UserService();    
+        private UserService userService = new UserService();
+        private IngredientService ingredientService = new IngredientService();
 
 
 
@@ -315,14 +316,7 @@ namespace Sims.Model
 
         public Ingredient findByID(int id)
         {
-            foreach (Ingredient i in ingredients)
-            {
-                if (int.Parse(i.ID) == id)
-                {
-                    return i;
-                }
-            }
-            return null;
+            return ingredientService.findByID(id);
         }
 
         public void SaveUsers()

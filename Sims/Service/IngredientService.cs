@@ -42,5 +42,9 @@ namespace Sims.Service
             ingredientRepository.Remove(entity);
         }
 
+        public Ingredient findByID(int id)
+        {
+            return ingredientRepository.findByID(id);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Sims.Model;
+﻿using Sims.CompositeComon.Enums;
+using Sims.Model;
 using Sims.Persistance;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,34 @@ namespace Sims.Service
         public ObservableCollection<Medicine> getAllDeclinedMedicines()
         {
             return medicineRepository.getAllDeclinedMedicines();
+        }
+
+        public bool CanPharmacistAccept(Entity SelectedItem)
+        {
+            foreach (Accept accept in ApplicationContext.Instance.Accepts)
+            {
+                if (accept.Medicine == SelectedItem && accept.PharmacistWhoAccepted == ApplicationContext.Instance.User)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool CanDoctorAccept(Entity SelectedItem)
+        {
+            if (SelectedItem == null)
+            {
+                return false;
+            }
+            if (ApplicationContext.Instance.User.UserType is UserType.Doctor)
+            {
+                if (((Medicine)SelectedItem).CounterForDoctor == 1)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

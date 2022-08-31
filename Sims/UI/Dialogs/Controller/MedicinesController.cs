@@ -523,30 +523,12 @@ namespace Sims.UI.Dialogs.ViewModel
 
         public bool CanPharmacistAccept()
         {
-            foreach (Accept accept in ApplicationContext.Instance.Accepts)
-            {
-                if (accept.Medicine == selectedItem && accept.PharmacistWhoAccepted == ApplicationContext.Instance.User)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return service.CanPharmacistAccept(SelectedItem);
         }
 
         public bool CanDoctorAccept()
         {
-            if (SelectedItem == null)
-            {
-                return true;
-            }
-            if (ApplicationContext.Instance.User.UserType is UserType.Doctor)
-            {
-                if (((Medicine)SelectedItem).CounterForDoctor == 1)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return service.CanDoctorAccept(SelectedItem);
         }
         protected void DeclineMedicineCommandExecute()
         {

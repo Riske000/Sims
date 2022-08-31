@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 C:\Users\neman\Desktop\Sims\Sims\Sims\App.xaml
 5-250357499
 
-46181006014
+46-1227321138
 19983234635
 MainWindow.xaml;UI\Components\Login\View\LoginView.xaml;UI\Components\Toolbar\View\ToolbarView.xaml;UI\Dialogs\View\MedicinesView.xaml;UI\Dialogs\View\UsersView.xaml;
 
-False
+True
 
