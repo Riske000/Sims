@@ -116,7 +116,23 @@ namespace Sims.Model
 
         protected override void ValidateSelf()
         {
-
+            if (this.Code == null || this.Code== "")
+            {
+                this.ValidationErrors["Code"] = "Code is required.";
+            }
+            if (this.Name == null || this.Name == "")
+            {
+                this.ValidationErrors["Name"] = "Name is required.";
+            }
+            if (this.Producer == null || this.Producer == "")
+            {
+                this.ValidationErrors["Producer"] = "Producer is required.";
+            }
+            if (this.Price == 0 || this.price < 0)
+            {
+                this.ValidationErrors["Price"] = "Price must be positive.";
+            }
+            
         }
     }
 }

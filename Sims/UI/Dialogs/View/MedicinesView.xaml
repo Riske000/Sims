@@ -68,7 +68,6 @@
                             <DataGridTextColumn Header="Quantity" CanUserSort="False" Binding="{Binding Quantity, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Producer" CanUserSort="False" Binding="{Binding Producer, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Is accepted" CanUserSort="False" Binding="{Binding Accepted, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Is deleted" CanUserSort="False" Binding="{Binding Deleted, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Price" CanUserSort="False" Binding="{Binding Price, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Is declined" CanUserSort="False" Binding="{Binding Declined, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Pharmacist approvals" CanUserSort="False" Binding="{Binding CounterForFarmacist, Mode=OneWay}"/>
@@ -77,7 +76,7 @@
                     </DataGrid>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ManagerLogged}">
                         <Label Content="Amount of ingredient: "/>
-                        <TextBox Width="50" Text="{Binding Amount}"/>
+                        <TextBox Width="50" Height="20" VerticalAlignment="Top" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
                         <Label Content="Select ingredient:" />
                         <ComboBox Text="Ingredient" Height="30" VerticalAlignment="Top" SelectedValue="{Binding IngredientToAdd}" Width="80" DisplayMemberPath="Name" ItemsSource="{Binding Ingredients}">
                         </ComboBox>
@@ -126,27 +125,29 @@
                     <Label Grid.Column="0" Grid.Row="0" Content="Code: " />
                     <TextBox Text="{Binding Path=SelectedItem.Code, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="0" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-                    <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Patient]}" Foreground="Red" Grid.Row="0" Grid.Column="2" Margin="15,0,0,0"/>-->
+                    <TextBlock Text="{Binding SelectedItem.ValidationErrors[Code]}" Foreground="Red" Grid.Row="0" Grid.Column="2" Margin="15,0,0,0"/>
 
                     <Label Grid.Column="0" Grid.Row="1" Content="Name: " />
                     <TextBox Text="{Binding Path=SelectedItem.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-                    <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Price]}" Foreground="Red" Grid.Row="1" Grid.Column="2" Margin="15,0,0,0"/>-->
+                    <TextBlock Text="{Binding SelectedItem.ValidationErrors[Name]}" Foreground="Red" Grid.Row="1" Grid.Column="2" Margin="15,0,0,0"/>
+                    
                     <Label Grid.Column="0" Grid.Row="2" Content="Producer: "/>
                     <TextBox Text="{Binding Path=SelectedItem.Producer, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
                                          Grid.Row="2" Grid.Column="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-
-                    <!--<TextBlock Text="{Binding SelectedItem.ValidationErrors[Alergens]}" Foreground="Red" Grid.Row="3" Grid.Column="2" Margin="15,0,0,0"/>-->
+                    <TextBlock Text="{Binding SelectedItem.ValidationErrors[Producer]}" Foreground="Red" Grid.Row="2" Grid.Column="2" Margin="15,0,0,0"/>
+                    
                     <Label Grid.Column="0" Grid.Row="3" Content="Price: "/>
                     <TextBox Text="{Binding Path=SelectedItem.Price, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
                                          Grid.Row="3" Grid.Column="1" Width="200" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-
-                    <Label Grid.Column="0" Grid.Row="5" Content="Reason by farmacist: "/>
-                    <TextBox Text="{Binding Path=SelectedItem.ReasonByFarmacist, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                    <TextBlock Text="{Binding SelectedItem.ValidationErrors[Price]}" Foreground="Red" Grid.Row="3" Grid.Column="2" Margin="15,0,0,0"/>
+                    
+                    <Label  Grid.Column="0" Grid.Row="5" Content="Reason by farmacist: "/>
+                    <TextBlock Text="{Binding Path=SelectedItem.ReasonByFarmacist, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
                                          Grid.Row="5" Grid.Column="1" Width="Auto" Margin="0,5,0,5"/>
 
                     <Label Grid.Column="0" Grid.Row="6" Content="Reason by doctor: " Margin="0,5,0,30"/>
-                    <TextBox Text="{Binding Path=SelectedItem.ReasonByDoctor, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                    <TextBlock Text="{Binding Path=SelectedItem.ReasonByDoctor, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
                                          Grid.Row="6" Grid.Column="1" Width="Auto" Margin="0,5,0,30"/>
 
                 </Grid>

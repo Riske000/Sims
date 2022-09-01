@@ -104,6 +104,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         #region Properties
 
+
         public string Search
         {
             get { return search; }
@@ -343,6 +344,11 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual bool OkAfterEdit()
         {
+            if (SelectedItem.HasErrors())
+            {
+                return false;
+            }
+
             if (OkAfterEditDatabase() == null)
             {
                 return false;
@@ -355,18 +361,31 @@ namespace Sims.UI.Dialogs.ViewModel
                 ((Medicine)SelectedItem).CounterForDoctor = 0;
                 OnPropertyChanged("Medicines");
             }
-
+            OnPropertyChanged("Users");
+            ApplicationContext.Instance.Save();
             return true;
         }
 
         protected virtual Entity OkAfterAddDatabase()
         {
-            return SelectedItem;
+            SelectedItem.Validate();
+            if (SelectedItem.IsValid)
+            {
+                return selectedItem;
+            }
+            DialogState = DialogState.Add;
+            return null;
         }
 
         protected virtual Entity OkAfterEditDatabase()
         {
-            return SelectedItem;
+            SelectedItem.Validate();
+            if (SelectedItem.IsValid)
+            {
+                return selectedItem;
+            }
+            DialogState = DialogState.Edit;
+            return null;
         }
 
         #region Abstract Methods

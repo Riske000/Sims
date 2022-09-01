@@ -69,7 +69,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -86,26 +86,32 @@
                 <Label Content="JMBG: " Grid.Row="0" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.Jmbg, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="0" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[Jmbg]}" Foreground="Red" Grid.Row="0" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="Email: " Grid.Row="1" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="1" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[Email]}" Foreground="Red" Grid.Row="1" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="Password: " Grid.Row="2" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="2" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[Password]}" Foreground="Red" Grid.Row="2" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="First name: " Grid.Row="3" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="3" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[FirstName]}" Foreground="Red" Grid.Row="3" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="Last name: " Grid.Row="4" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.LastName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="4" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[LastName]}" Foreground="Red" Grid.Row="4" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="Phone: " Grid.Row="5" Grid.Column="0"/>
                 <TextBox Text="{Binding Path=SelectedItem.Phone, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
                                          Grid.Column="1" Grid.Row="5" Width="200" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding SelectedItem.ValidationErrors[Phone]}" Foreground="Red" Grid.Row="5" Grid.Column="2" Margin="15,0,0,0"/>
 
                 <Label Content="User type: " Grid.Row="6" Grid.Column="0"/>
                 <ComboBox Text="User Type" Grid.Row="6" Grid.Column="1" Width="80" Name="UserType" SelectedValuePath="Content" SelectedValue="{Binding Path=SelectedItem.UserType}">

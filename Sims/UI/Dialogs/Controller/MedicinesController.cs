@@ -130,6 +130,8 @@ namespace Sims.UI.Dialogs.ViewModel
         {
             get { return ApplicationContext.Instance.User.UserType != UserType.Pharmacist ? Visibility.Visible : Visibility.Collapsed; }
         }
+
+        
         //public Visibility QuantitySelected
         //{
         //    get { return category == "Quantity" ? Visibility.Visible : Visibility.Collapsed; }
@@ -370,6 +372,10 @@ namespace Sims.UI.Dialogs.ViewModel
         protected void SearchCommandExecute()
         {
 
+            if(SearchText == null)
+            {
+                SearchText = "";
+            }
             if (category == "Quantity")
             {
                 if (Int32.TryParse(searchText, out temp))
@@ -442,7 +448,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual bool CanAddIngredientToMedicineCommandExecute()
         {
-            return Amount != 0 && IngredientToAdd != null && SelectedItem != null;
+            return Amount != 0 && IngredientToAdd != null && SelectedItem != null && Amount > 0;
         }
 
         protected void RemoveIngredientFromMedicineCommandExecute()
@@ -480,7 +486,7 @@ namespace Sims.UI.Dialogs.ViewModel
 
         protected virtual bool CanAddAmountOfMedicineCommandExecute()
         {
-            return SelectedItem != null && AmountToAdd != 0;
+            return SelectedItem != null && AmountToAdd != 0 && AmountToAdd > 0;
         }
 
         protected void AcceptMedicineCommandExecute()

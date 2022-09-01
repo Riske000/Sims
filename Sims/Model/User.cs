@@ -66,7 +66,7 @@ namespace Sims.Model
 
         public override string Validate(string columnName)
         {
-            return null;
+            return string.Empty;
         }
 
         public Boolean Blocked
@@ -77,7 +77,30 @@ namespace Sims.Model
 
         protected override void ValidateSelf()
         {
-            throw new NotImplementedException();
+            if(this.FirstName == null || this.FirstName == "")
+            {
+                this.ValidationErrors["FirstName"] = "First name is required.";
+            }
+            if (this.LastName == null || this.LastName == "")
+            {
+                this.ValidationErrors["LastName"] = "Last name is required.";
+            }
+            if (this.Password == null || this.Password == "")
+            {
+                this.ValidationErrors["Password"] = "Password is required.";
+            }
+            if (this.Jmbg == null || this.Jmbg == "")
+            {
+                this.ValidationErrors["Jmbg"] = "Jmbg is required.";
+            }
+            if (this.Email == null || this.Email == "")
+            {
+                this.ValidationErrors["Email"] = "Email is required.";
+            }
+            if (this.Phone == null || this.Phone == "")
+            {
+                this.ValidationErrors["Phone"] = "Phone is required.";
+            }
         }
 
         public string FullName(User user)

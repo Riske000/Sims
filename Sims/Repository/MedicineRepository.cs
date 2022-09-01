@@ -151,6 +151,19 @@ namespace Sims.Persistance
             {
                 result = medicines.ToList();
             }
+
+            if(operators.Count == 0)
+            {
+                foreach(Medicine medicine in ApplicationContext.Instance.Medicines)
+                {
+                    if(checkIfIngredientsHasString(medicine, strings[0]))
+                    {
+                        result.Add(medicine);
+                    }
+                }
+                return result;
+            }
+
             foreach (Medicine medicine in medicines)
             {
                 for (int i = 0; i < strings.Count - 1; i++)
